@@ -1,0 +1,91 @@
+{%- liquid
+  assign booking_url = '/pages/buchung'
+  if settings.booking_page != blank
+    assign booking_url = pages[settings.booking_page].url
+  endif
+-%}
+<footer class="site-footer">
+  <div class="container">
+    <div class="site-footer__top">
+      <div class="site-footer__brand">
+        <a href="{{ routes.root_url }}" class="site-logo" style="color:#fff;">
+          <span class="l-tile" aria-hidden="true">L</span>
+          <span class="site-logo__text">Fahrschule Türhan<small style="color:rgba(255,255,255,0.6);">Mit mir zum Führerschein</small></span>
+        </a>
+        <p style="margin-top:16px;">{{ section.settings.tagline }}</p>
+        {%- if settings.social_instagram != blank -%}
+          <a href="{{ settings.social_instagram }}" target="_blank" rel="noopener">Instagram</a>
+        {%- endif -%}
+      </div>
+
+      <div>
+        <h4>Navigation</h4>
+        <ul>
+          {%- for link in linklists[section.settings.menu].links -%}
+            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+          {%- endfor -%}
+          <li><a href="{{ booking_url }}">Fahrstunde buchen</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Kontakt</h4>
+        <ul>
+          {%- if settings.contact_phone != blank -%}
+            <li><a href="tel:{{ settings.contact_phone | remove: ' ' }}">{{ settings.contact_phone }}</a></li>
+          {%- endif -%}
+          {%- if settings.contact_email != blank -%}
+            <li><a href="mailto:{{ settings.contact_email }}">{{ settings.contact_email }}</a></li>
+          {%- endif -%}
+          {%- if settings.contact_whatsapp != blank -%}
+            <li><a href="https://wa.me/{{ settings.contact_whatsapp }}" target="_blank" rel="noopener">WhatsApp schreiben</a></li>
+          {%- endif -%}
+          {%- if settings.contact_address != blank -%}
+            <li><span style="white-space:pre-line;">{{ settings.contact_address }}</span></li>
+          {%- endif -%}
+        </ul>
+      </div>
+
+      <div>
+        <h4>Öffnungszeiten</h4>
+        <p class="opening-hours" style="color:rgba(255,255,255,0.75);">{{ settings.opening_hours }}</p>
+        <h4 style="margin-top:20px;">Rechtliches</h4>
+        <ul>
+          {%- for link in linklists[section.settings.legal_menu].links -%}
+            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    </div>
+
+    <div class="site-footer__bottom">
+      <span>© {{ 'now' | date: '%Y' }} {{ shop.name }} · Ruggell, Liechtenstein</span>
+      <span>Fahrschule für Liechtenstein & Region Werdenberg</span>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Fusszeile",
+  "settings": [
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Kurzbeschreibung",
+      "default": "Entspannt, geduldig und mit über 61 zufriedenen Fahrschülern: dein Weg zum Führerschein in Liechtenstein und der Region Werdenberg."
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Footer-Menü",
+      "default": "main-menu"
+    },
+    {
+      "type": "link_list",
+      "id": "legal_menu",
+      "label": "Rechtliches Menü (Impressum, Datenschutz, AGB)"
+    }
+  ]
+}
+{% endschema %}

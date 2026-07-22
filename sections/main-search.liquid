@@ -1,0 +1,44 @@
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <h1 style="font-size:clamp(1.7rem,5vw,2.4rem);">Suche</h1>
+      <hr class="roadline">
+    </div>
+    <form action="{{ routes.search_url }}" method="get" class="search-form" role="search">
+      <div class="form-field" style="flex-grow:1;">
+        <label class="visually-hidden" for="suche">Suchbegriff</label>
+        <input type="search" id="suche" name="q" value="{{ search.terms | escape }}" placeholder="Suchbegriff eingeben">
+      </div>
+      <button type="submit" class="btn btn--primary">Suchen</button>
+    </form>
+
+    {%- if search.performed -%}
+      {%- if search.results_count == 0 -%}
+        <p class="text-center" style="color:var(--asphalt);">Keine Ergebnisse für «{{ search.terms | escape }}».</p>
+      {%- else -%}
+        <div class="article-list">
+          {%- paginate search.results by 12 -%}
+            {%- for item in search.results -%}
+              <div class="article-card">
+                <div class="article-card__body">
+                  <h3><a href="{{ item.url }}">{{ item.title }}</a></h3>
+                  {%- if item.price -%}<p style="font-weight:700;">{{ item.price | money }}</p>{%- endif -%}
+                </div>
+              </div>
+            {%- endfor -%}
+            {%- if paginate.pages > 1 -%}
+              <nav aria-label="Seiten">{{ paginate | default_pagination }}</nav>
+            {%- endif -%}
+          {%- endpaginate -%}
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Suche",
+  "settings": []
+}
+{% endschema %}

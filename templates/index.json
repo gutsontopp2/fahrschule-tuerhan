@@ -1,0 +1,75 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "blocks": {
+        "stat1": { "type": "stat", "settings": { "value": "61+", "label": "ausgebildete Fahrschüler" } },
+        "stat2": { "type": "stat", "settings": { "value": "99 %", "label": "höchst zufrieden (6/6 Sterne)" } },
+        "stat3": { "type": "stat", "settings": { "value": "50 Min", "label": "pro Fahrstunde" } }
+      },
+      "block_order": ["stat1", "stat2", "stat3"],
+      "settings": {}
+    },
+    "advantages": {
+      "type": "advantages",
+      "blocks": {
+        "a1": { "type": "advantage", "settings": { "icon": "smile", "title": "Entspannte Atmosphäre", "text": "Ohne Stress lernen: mit Geduld, Humor und einem lockeren Umfeld zur Prüfungsreife." } },
+        "a2": { "type": "advantage", "settings": { "icon": "calendar", "title": "Flexible Termine – online buchbar", "text": "Freie Fahrstunden direkt im Kalender sehen und in zwei Minuten fix buchen." } },
+        "a3": { "type": "advantage", "settings": { "icon": "chat", "title": "Digitale Lernbegleitung", "text": "Hilfsvideos, Bilder und Handouts per WhatsApp, SMS oder E-Mail – auch zwischen den Fahrstunden." } }
+      },
+      "block_order": ["a1", "a2", "a3"],
+      "settings": {}
+    },
+    "packages": {
+      "type": "packages",
+      "settings": {}
+    },
+    "about": {
+      "type": "about",
+      "blocks": {
+        "s1": { "type": "stat", "settings": { "value": "61+", "label": "Fahrschüler ausgebildet" } },
+        "s2": { "type": "stat", "settings": { "value": "99 %", "label": "höchst zufrieden" } }
+      },
+      "block_order": ["s1", "s2"],
+      "settings": {
+        "link_label": "Mehr über mich",
+        "link": "/pages/ueber-mich"
+      }
+    },
+    "instructors": {
+      "type": "instructors",
+      "blocks": {
+        "i1": { "type": "instructor", "settings": {} }
+      },
+      "block_order": ["i1"],
+      "settings": {}
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "blocks": {
+        "t1": { "type": "testimonial", "settings": {} },
+        "t2": { "type": "testimonial", "settings": { "quote": "Die entspannte Atmosphäre hat mir extrem geholfen. Jede Stunde war gut vorbereitet und fair abgerechnet.", "name": "Lea", "detail": "Kategorie B" } },
+        "t3": { "type": "testimonial", "settings": { "quote": "Flexible Termine, klare Erklärungen und super Unterstützung mit Videos zwischen den Fahrstunden.", "name": "Jonas", "detail": "Kategorie B, Automat" } }
+      },
+      "block_order": ["t1", "t2", "t3"],
+      "settings": {}
+    },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "f1": { "type": "faq", "settings": {} },
+        "f2": { "type": "faq", "settings": { "question": "Wo werde ich abgeholt?", "answer": "Beim Buchen wählst du einen Treffpunkt aus – zum Beispiel Bahnhof Buchs SG oder nach Vereinbarung. Andere Treffpunkte sind auf Anfrage möglich." } },
+        "f3": { "type": "faq", "settings": { "question": "Fahre ich handgeschaltet oder Automat?", "answer": "Beides ist möglich. Gib beim Buchen einfach die gewünschte Fahrstundenart an – gefahren wird im weissen Seat Leon FR." } },
+        "f4": { "type": "faq", "settings": { "question": "Kann ich einen Termin verschieben oder stornieren?", "answer": "Ja, melde dich bitte spätestens 24 Stunden vorher telefonisch oder per WhatsApp. Kurzfristigere Absagen müssen verrechnet werden." } },
+        "f5": { "type": "faq", "settings": { "question": "Was brauche ich für die erste Fahrstunde?", "answer": "Deinen gültigen Lernfahrausweis und bequeme Schuhe. Alles andere besprechen wir in der ersten Lektion." } }
+      },
+      "block_order": ["f1", "f2", "f3", "f4", "f5"],
+      "settings": {}
+    },
+    "contact": {
+      "type": "contact",
+      "settings": {}
+    }
+  },
+  "order": ["hero", "advantages", "packages", "about", "instructors", "testimonials", "faq", "contact"]
+}

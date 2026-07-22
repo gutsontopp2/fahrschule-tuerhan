@@ -1,0 +1,14 @@
+{
+  "sections": {
+    "main": { "type": "contact", "settings": {} },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "f1": { "type": "faq", "settings": {} }
+      },
+      "block_order": ["f1"],
+      "settings": {}
+    }
+  },
+  "order": ["main", "faq"]
+}

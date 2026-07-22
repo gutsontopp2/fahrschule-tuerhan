@@ -1,0 +1,53 @@
+{
+  "general": {
+    "meta": {
+      "page": "Seite {{ page }}"
+    },
+    "404": {
+      "title": "Seite nicht gefunden",
+      "subtext": "Die gesuchte Seite existiert nicht oder wurde verschoben."
+    },
+    "search": {
+      "title": "Suche",
+      "placeholder": "Suchbegriff eingeben",
+      "submit": "Suchen",
+      "no_results": "Keine Ergebnisse für «{{ terms }}» gefunden."
+    },
+    "cart": {
+      "title": "Warenkorb",
+      "empty": "Dein Warenkorb ist leer.",
+      "checkout": "Zur Kasse",
+      "remove": "Entfernen",
+      "subtotal": "Zwischensumme",
+      "taxes_note": "Inklusive MwSt. Der Termin ist verbindlich reserviert, bis die Reservierung abläuft."
+    },
+    "contact_form": {
+      "name": "Name",
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "message": "Nachricht",
+      "send": "Nachricht senden",
+      "success": "Danke für deine Nachricht. Ich melde mich so schnell wie möglich.",
+      "error": "Bitte überprüfe deine Eingaben."
+    },
+    "accessibility": {
+      "skip_to_content": "Zum Inhalt springen",
+      "open_menu": "Menü öffnen",
+      "close_menu": "Menü schliessen",
+      "cart": "Warenkorb"
+    }
+  },
+  "products": {
+    "product": {
+      "price": "Preis",
+      "add_to_booking": "Termin wählen",
+      "sold_out": "Nicht verfügbar",
+      "duration": "Dauer"
+    }
+  },
+  "blogs": {
+    "article": {
+      "read_more": "Weiterlesen"
+    }
+  }
+}

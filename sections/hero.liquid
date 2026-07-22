@@ -1,0 +1,104 @@
+{%- liquid
+  assign booking_url = '/pages/buchung'
+  if settings.booking_page != blank
+    assign booking_url = pages[settings.booking_page].url
+  endif
+-%}
+<section class="hero">
+  <div class="container hero__inner">
+    <div>
+      <span class="hero__badge">
+        <span class="l-tile l-tile--sm" aria-hidden="true">L</span>
+        {{ section.settings.badge }}
+      </span>
+      <h1>{{ section.settings.heading }}</h1>
+      <p>{{ section.settings.text }}</p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="{{ booking_url }}">{{ section.settings.cta_label }}</a>
+        {%- if settings.contact_phone != blank -%}
+          <a class="btn btn--ghost" href="tel:{{ settings.contact_phone | remove: ' ' }}">{% render 'icon', name: 'phone' %} Anrufen</a>
+        {%- endif -%}
+      </div>
+      <div class="hero__stats">
+        {%- for block in section.blocks -%}
+          <div class="hero__stat" {{ block.shopify_attributes }}>
+            <b>{{ block.settings.value }}</b>
+            <span>{{ block.settings.label }}</span>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+    <div class="hero__media">
+      {%- if section.settings.image != blank -%}
+        <img
+          src="{{ section.settings.image | image_url: width: 900 }}"
+          srcset="{{ section.settings.image | image_url: width: 600 }} 600w, {{ section.settings.image | image_url: width: 900 }} 900w, {{ section.settings.image | image_url: width: 1200 }} 1200w"
+          sizes="(min-width: 900px) 45vw, 100vw"
+          alt="{{ section.settings.image.alt | default: 'Fahrschulauto der Fahrschule Türhan' | escape }}"
+          width="{{ section.settings.image.width }}"
+          height="{{ section.settings.image.height }}"
+          loading="eager">
+      {%- else -%}
+        <div class="product-page__media--placeholder"><span class="l-tile" style="width:72px;height:72px;font-size:2.4rem;border-radius:16px;">L</span></div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "settings": [
+    {
+      "type": "text",
+      "id": "badge",
+      "label": "Kleine Zeile über dem Titel",
+      "default": "Fahrschule in Liechtenstein & Werdenberg"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titel",
+      "default": "Mit mir zum Führerschein."
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Entspannt und ohne Stress zur bestandenen Autoprüfung – handgeschaltet oder Automat, im weissen Seat Leon FR. Wähle deinen Termin direkt online."
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button-Text",
+      "default": "Fahrstunde buchen"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Bild (z. B. Fahrschulauto)"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Kennzahl",
+      "settings": [
+        { "type": "text", "id": "value", "label": "Wert", "default": "99 %" },
+        { "type": "text", "id": "label", "label": "Beschriftung", "default": "zufriedene Fahrschüler" }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "Hero",
+      "blocks": [
+        { "type": "stat", "settings": { "value": "61+", "label": "ausgebildete Fahrschüler" } },
+        { "type": "stat", "settings": { "value": "99 %", "label": "höchst zufrieden (6/6 Sterne)" } },
+        { "type": "stat", "settings": { "value": "50 Min", "label": "pro Fahrstunde" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,41 @@
+{%- liquid
+  assign booking_url = '/pages/buchung'
+  if settings.booking_page != blank
+    assign booking_url = pages[settings.booking_page].url
+  endif
+  assign duration = product.metafields.custom.dauer_minuten.value | default: settings.booking_default_duration
+-%}
+<section class="section">
+  <div class="container product-page">
+    <div class="product-page__media">
+      {%- if product.featured_image != blank -%}
+        <img
+          src="{{ product.featured_image | image_url: width: 900 }}"
+          alt="{{ product.featured_image.alt | default: product.title | escape }}"
+          width="{{ product.featured_image.width }}"
+          height="{{ product.featured_image.height }}">
+      {%- else -%}
+        <div class="product-page__media--placeholder"><span class="l-tile" style="width:72px;height:72px;font-size:2.4rem;border-radius:16px;">L</span></div>
+      {%- endif -%}
+    </div>
+    <div>
+      <span class="eyebrow">Fahrstunde</span>
+      <h1 style="font-size:clamp(1.7rem,4vw,2.5rem);text-transform:none;">{{ product.title }}</h1>
+      <p class="product-page__price">{{ product.price | money_with_currency }}</p>
+      <div class="product-page__meta">
+        <span>{% render 'icon', name: 'clock' %} {{ duration }} Minuten</span>
+        <span>{% render 'icon', name: 'car' %} Seat Leon FR</span>
+      </div>
+      <div class="product-page__desc rte">{{ product.description }}</div>
+      <a class="btn btn--primary" href="{{ booking_url }}?leistung={{ product.handle }}">Termin wählen</a>
+      <p class="booking-hint">Datum und Uhrzeit wählst du im nächsten Schritt im Kalender. Bezahlt wird sicher über den Shopify-Checkout.</p>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Produktseite",
+  "settings": []
+}
+{% endschema %}

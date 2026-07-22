@@ -1,0 +1,64 @@
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+      <h2>{{ section.settings.heading }}</h2>
+      <hr class="roadline">
+    </div>
+    <div class="advantages">
+      {%- for block in section.blocks -%}
+        <div class="advantage" {{ block.shopify_attributes }}>
+          <span class="l-tile l-tile--sm" aria-hidden="true">{% render 'icon', name: block.settings.icon %}</span>
+          <div>
+            <h3>{{ block.settings.title }}</h3>
+            <p>{{ block.settings.text }}</p>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Vorteile",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Kleine Zeile", "default": "Deine Vorteile" },
+    { "type": "text", "id": "heading", "label": "Titel", "default": "Darum Fahrschule Türhan" }
+  ],
+  "blocks": [
+    {
+      "type": "advantage",
+      "name": "Vorteil",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "smile", "label": "Entspannt" },
+            { "value": "calendar", "label": "Kalender" },
+            { "value": "tag", "label": "Preis" },
+            { "value": "chat", "label": "Chat" },
+            { "value": "check", "label": "Haken" },
+            { "value": "car", "label": "Auto" }
+          ],
+          "default": "check"
+        },
+        { "type": "text", "id": "title", "label": "Titel", "default": "Entspannte Atmosphäre" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Ohne Druck lernen – auch in schwierigen Situationen mit der nötigen Voraussicht." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Vorteile",
+      "blocks": [
+        { "type": "advantage", "settings": { "icon": "smile", "title": "Entspannte Atmosphäre", "text": "Ohne Stress lernen: mit Geduld, Humor und einem lockeren Umfeld zur Prüfungsreife." } },
+        { "type": "advantage", "settings": { "icon": "calendar", "title": "Flexible Termine – online buchbar", "text": "Freie Fahrstunden direkt im Kalender sehen und in zwei Minuten fix buchen." } },
+        { "type": "advantage", "settings": { "icon": "chat", "title": "Digitale Lernbegleitung", "text": "Hilfsvideos, Bilder und Handouts per WhatsApp, SMS oder E-Mail – auch zwischen den Fahrstunden." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

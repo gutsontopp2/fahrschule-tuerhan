@@ -1,0 +1,19 @@
+{%- comment -%}
+  Karte für eine Fahrstunde / ein Paket.
+  Aufruf: {% render 'product-card', product: product, booking_url: booking_url, featured_handle: handle %}
+{%- endcomment -%}
+{%- liquid
+  assign duration = product.metafields.custom.dauer_minuten.value | default: settings.booking_default_duration
+  assign is_featured = false
+  if featured_handle != blank and product.handle == featured_handle
+    assign is_featured = true
+  endif
+-%}
+<div class="package-card{% if is_featured %} package-card--featured{% endif %}">
+  {%- if is_featured -%}<span class="package-card__flag">Beliebt</span>{%- endif -%}
+  <h3><a class="package-card__title-link" href="{{ product.url }}">{{ product.title }}</a></h3>
+  <span class="package-card__meta">{% render 'icon', name: 'clock' %} {{ duration }} Minuten</span>
+  <p class="package-card__desc">{{ product.description | strip_html | truncate: 110 }}</p>
+  <p class="package-card__price">{{ product.price | money }} <small>inkl. MwSt.</small></p>
+  <a class="btn btn--primary" href="{{ booking_url }}?leistung={{ product.handle }}">Jetzt buchen</a>
+</div>

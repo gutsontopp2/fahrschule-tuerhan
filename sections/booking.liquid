@@ -1,0 +1,166 @@
+{%- liquid
+  assign col = collections[section.settings.collection]
+  assign points_raw = settings.booking_meeting_points | newline_to_br
+  assign points = points_raw | split: '<br />'
+-%}
+<section class="section" id="buchung">
+  <div class="container booking" data-booking>
+
+    <div class="section-head">
+      <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+      <h2>{{ section.settings.heading }}</h2>
+      <p>{{ section.settings.text }}</p>
+      <hr class="roadline">
+    </div>
+
+    {%- comment -%} Wird per JS eingeblendet, wenn keine Backend-URL hinterlegt ist {%- endcomment -%}
+    <div class="booking__offline" data-booking-offline hidden>
+      <b>Online-Buchung noch nicht aktiv.</b><br>
+      Ruf mich in der Zwischenzeit gerne an:
+      {%- if settings.contact_phone != blank %} <a href="tel:{{ settings.contact_phone | remove: ' ' }}">{{ settings.contact_phone }}</a>{% endif -%}
+      <br><small>Hinweis für den Betreiber: Backend-URL unter Theme-Einstellungen → Buchungssystem eintragen.</small>
+    </div>
+    <noscript>
+      <div class="booking__offline">
+        Für die Online-Buchung wird JavaScript benötigt. Alternativ erreichst du mich telefonisch unter
+        {{ settings.contact_phone }}.
+      </div>
+    </noscript>
+
+    {%- if col == blank or col.products.size == 0 -%}
+      <div class="booking__offline">
+        <b>Keine Fahrstunden hinterlegt.</b><br>
+        <small>Hinweis für den Betreiber: Kollektion mit Fahrstunden-Produkten in den Abschnitts-Einstellungen wählen.</small>
+      </div>
+    {%- else -%}
+
+    <div data-booking-app>
+      <ol class="booking-steps" data-step-indicator>
+        <li class="is-active"><span>Fahrstunde</span></li>
+        {%- if settings.booking_show_instructor -%}<li><span>Fahrlehrer</span></li>{%- endif -%}
+        <li><span>Datum</span></li>
+        <li><span>Uhrzeit</span></li>
+        <li><span>Deine Daten</span></li>
+      </ol>
+
+      <div class="booking-error" role="alert" data-booking-error></div>
+
+      <div class="booking-panel" data-panel="lesson">
+        <h3><span class="l-tile l-tile--sm" aria-hidden="true">1</span> Fahrstundenart wählen</h3>
+        <div class="option-grid" data-lesson-grid></div>
+      </div>
+
+      <div class="booking-panel" data-panel="instructor" hidden>
+        <h3><span class="l-tile l-tile--sm" aria-hidden="true">2</span> Fahrlehrer wählen</h3>
+        <div class="option-grid" data-instructor-grid></div>
+      </div>
+
+      <div class="booking-panel" data-panel="date" hidden>
+        <h3><span class="l-tile l-tile--sm" aria-hidden="true">{% if settings.booking_show_instructor %}3{% else %}2{% endif %}</span> Termin wählen</h3>
+        <div class="calendar">
+          <div class="calendar__head">
+            <button type="button" class="calendar__nav" data-cal-prev aria-label="Vorheriger Monat">‹</button>
+            <span class="calendar__month" data-cal-month aria-live="polite"></span>
+            <button type="button" class="calendar__nav" data-cal-next aria-label="Nächster Monat">›</button>
+          </div>
+          <p class="booking-loading" data-cal-loading hidden>Verfügbarkeiten werden geladen …</p>
+          <div class="calendar__grid" data-cal-grid></div>
+          <div class="calendar__legend">
+            <span><i class="dot-free"></i>Termine frei</span>
+            <span><i class="dot-busy"></i>Ausgebucht / gesperrt</span>
+          </div>
+        </div>
+
+        <div data-timeslots-wrap hidden style="margin-top:26px;">
+          <h4 style="margin-bottom:12px;">Freie Zeiten am <span data-timeslots-date></span></h4>
+          <div class="timeslots" data-timeslots></div>
+          <p class="booking-hint">Alle Zeiten in lokaler Zeit (Europe/Zurich), 24-Stunden-Format.</p>
+        </div>
+      </div>
+
+      <form class="booking-panel" data-panel="details" data-booking-form hidden novalidate>
+        <h3><span class="l-tile l-tile--sm" aria-hidden="true">{% if settings.booking_show_instructor %}5{% else %}4{% endif %}</span> Deine Daten</h3>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="buchung-name">Vor- und Nachname</label>
+            <input type="text" id="buchung-name" name="name" autocomplete="name" required>
+          </div>
+          <div class="form-field">
+            <label for="buchung-email">E-Mail (für die Bestätigung)</label>
+            <input type="email" id="buchung-email" name="email" autocomplete="email" required>
+          </div>
+          <div class="form-field">
+            <label for="buchung-phone">Handynummer</label>
+            <input type="tel" id="buchung-phone" name="phone" autocomplete="tel" placeholder="+41 …" required>
+          </div>
+          <div class="form-field">
+            <label for="buchung-treffpunkt">Treffpunkt</label>
+            <select id="buchung-treffpunkt" name="meetingPoint" required>
+              <option value="" selected disabled>Bitte wählen …</option>
+              {%- for point in points -%}
+                {%- assign p = point | strip -%}
+                {%- if p != blank -%}<option value="{{ p | escape }}">{{ p }}</option>{%- endif -%}
+              {%- endfor -%}
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="buchung-note">Bemerkung (optional)</label>
+            <textarea id="buchung-note" name="note" rows="3" placeholder="z. B. erste Fahrstunde, Wunschthemen, Abholort-Details"></textarea>
+          </div>
+        </div>
+
+        <div class="booking-summary" data-summary hidden style="margin-top:22px;">
+          <h3 style="font-size:1rem;">Deine Buchung</h3>
+          <dl data-summary-rows></dl>
+          <div class="booking-summary__total"><span>Total</span><span data-summary-total></span></div>
+        </div>
+
+        <div class="reservation-timer" data-reservation-timer>
+          {% render 'icon', name: 'clock' %}
+          <span>Termin für dich reserviert – bitte Zahlung abschliessen: <b>15:00</b></span>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--block" data-booking-submit disabled>Verbindlich buchen</button>
+        <p class="booking-hint">Beim Klick wird dein Termin verbindlich reserviert und du wirst zur sicheren Bezahlung (Shopify-Checkout) weitergeleitet. Wird die Zahlung nicht innert {{ section.settings.hold_minutes_display }} Minuten abgeschlossen, wird der Termin automatisch wieder freigegeben.</p>
+      </form>
+
+      <script type="application/json" data-booking-config>
+        {
+          "backendUrl": {{ settings.booking_backend_url | default: '' | json }},
+          "showInstructor": {{ settings.booking_show_instructor | json }},
+          "defaultDuration": {{ settings.booking_default_duration | default: 50 }},
+          "products": [
+            {%- for product in col.products -%}
+            {
+              "id": {{ product.id }},
+              "handle": {{ product.handle | json }},
+              "variantId": {{ product.selected_or_first_available_variant.id }},
+              "title": {{ product.title | json }},
+              "description": {{ product.description | strip_html | truncate: 70 | json }},
+              "durationMinutes": {{ product.metafields.custom.dauer_minuten.value | default: settings.booking_default_duration }},
+              "priceFormatted": {{ product.price | money_with_currency | json }}
+            }{%- unless forloop.last -%},{%- endunless -%}
+            {%- endfor -%}
+          ]
+        }
+      </script>
+    </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<script src="{{ 'booking.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Buchung",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Kleine Zeile", "default": "Online-Buchung" },
+    { "type": "text", "id": "heading", "label": "Titel", "default": "Fahrstunde buchen" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Wähle deine Fahrstunde, einen freien Termin und bezahle sicher online. Dein Termin ist danach fix – ohne Hin und Her." },
+    { "type": "collection", "id": "collection", "label": "Kollektion mit Fahrstunden-Produkten" },
+    { "type": "text", "id": "hold_minutes_display", "label": "Angezeigte Reservierungsdauer (muss zur Backend-Einstellung passen)", "default": "15" }
+  ],
+  "presets": [ { "name": "Buchung" } ]
+}
+{% endschema %}

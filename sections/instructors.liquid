@@ -1,0 +1,60 @@
+<section class="section section--white" id="fahrlehrer">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+      <h2>{{ section.settings.heading }}</h2>
+      <hr class="roadline">
+    </div>
+    <div class="instructors">
+      {%- for block in section.blocks -%}
+        <div class="instructor-card" {{ block.shopify_attributes }}>
+          {%- if block.settings.image != blank -%}
+            <img
+              src="{{ block.settings.image | image_url: width: 640 }}"
+              alt="{{ block.settings.name | escape }}"
+              width="{{ block.settings.image.width }}"
+              height="{{ block.settings.image.height }}"
+              loading="lazy">
+          {%- endif -%}
+          <div class="instructor-card__body">
+            <h3>{{ block.settings.name }}</h3>
+            <p class="instructor-card__role">{{ block.settings.role }}</p>
+            <p class="instructor-card__bio">{{ block.settings.bio }}</p>
+            {%- if block.settings.tags != blank -%}
+              <div class="instructor-card__tags">
+                {%- assign tags = block.settings.tags | split: ',' -%}
+                {%- for tag in tags -%}<span>{{ tag | strip }}</span>{%- endfor -%}
+              </div>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Fahrlehrer",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Kleine Zeile", "default": "Dein Team" },
+    { "type": "text", "id": "heading", "label": "Titel", "default": "Deine Fahrlehrerin" }
+  ],
+  "blocks": [
+    {
+      "type": "instructor",
+      "name": "Fahrlehrer",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Foto" },
+        { "type": "text", "id": "name", "label": "Name", "default": "Dilek Türhan" },
+        { "type": "text", "id": "role", "label": "Rolle", "default": "Fahrlehrerin Kategorie B" },
+        { "type": "textarea", "id": "bio", "label": "Kurzbeschreibung", "default": "Geduldig, gut gelaunt und mit einem Auge für jeden Lernstand. Neben dem Fahren gehört meine Zeit meiner Familie." },
+        { "type": "text", "id": "tags", "label": "Merkmale (mit Komma getrennt)", "default": "Deutsch, Türkisch, Handschaltung & Automat, Weisser Seat Leon FR" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Fahrlehrer", "blocks": [ { "type": "instructor" } ] }
+  ]
+}
+{% endschema %}

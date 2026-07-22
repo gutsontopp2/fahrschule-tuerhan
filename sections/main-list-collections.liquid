@@ -1,0 +1,25 @@
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <h1 style="font-size:clamp(1.7rem,5vw,2.4rem);">Angebot</h1>
+      <hr class="roadline">
+    </div>
+    <div class="article-list">
+      {%- for collection in collections -%}
+        <div class="article-card">
+          <div class="article-card__body">
+            <h3><a href="{{ collection.url }}">{{ collection.title }}</a></h3>
+            <p style="color:var(--asphalt);font-size:0.92rem;">{{ collection.products.size }} Angebote</p>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Kollektionsliste",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,15 @@
+{
+  "sections": {
+    "main": { "type": "main-product", "settings": {} },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "f1": { "type": "faq", "settings": {} },
+        "f2": { "type": "faq", "settings": { "question": "Kann ich einen Termin verschieben oder stornieren?", "answer": "Ja, melde dich bitte spätestens 24 Stunden vorher telefonisch oder per WhatsApp. Kurzfristigere Absagen müssen verrechnet werden." } }
+      },
+      "block_order": ["f1", "f2"],
+      "settings": {}
+    }
+  },
+  "order": ["main", "faq"]
+}

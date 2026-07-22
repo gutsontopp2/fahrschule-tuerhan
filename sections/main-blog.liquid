@@ -1,0 +1,35 @@
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <h1 style="font-size:clamp(1.7rem,5vw,2.4rem);">{{ blog.title }}</h1>
+      <hr class="roadline">
+    </div>
+    {%- paginate blog.articles by 9 -%}
+      <div class="article-list">
+        {%- for article in blog.articles -%}
+          <article class="article-card">
+            {%- if article.image != blank -%}
+              <a href="{{ article.url }}"><img src="{{ article.image | image_url: width: 640 }}" alt="{{ article.image.alt | default: article.title | escape }}" loading="lazy" width="{{ article.image.width }}" height="{{ article.image.height }}"></a>
+            {%- endif -%}
+            <div class="article-card__body">
+              <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%d.%m.%Y' }}</time>
+              <h3><a href="{{ article.url }}">{{ article.title }}</a></h3>
+              <p style="color:var(--asphalt);font-size:0.92rem;">{{ article.excerpt_or_content | strip_html | truncate: 120 }}</p>
+              <a href="{{ article.url }}">Weiterlesen</a>
+            </div>
+          </article>
+        {%- endfor -%}
+      </div>
+      {%- if paginate.pages > 1 -%}
+        <nav aria-label="Seiten">{{ paginate | default_pagination }}</nav>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Blog",
+  "settings": []
+}
+{% endschema %}

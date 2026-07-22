@@ -1,0 +1,32 @@
+{%- liquid
+  assign booking_url = '/pages/buchung'
+  if settings.booking_page != blank
+    assign booking_url = pages[settings.booking_page].url
+  endif
+-%}
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <h1 style="font-size:clamp(1.7rem,5vw,2.4rem);">{{ collection.title }}</h1>
+      {%- if collection.description != blank -%}<p>{{ collection.description | strip_html }}</p>{%- endif -%}
+      <hr class="roadline">
+    </div>
+    {%- paginate collection.products by 12 -%}
+      <div class="packages">
+        {%- for product in collection.products -%}
+          {% render 'product-card', product: product, booking_url: booking_url %}
+        {%- endfor -%}
+      </div>
+      {%- if paginate.pages > 1 -%}
+        <nav aria-label="Seiten">{{ paginate | default_pagination }}</nav>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Kollektion",
+  "settings": []
+}
+{% endschema %}

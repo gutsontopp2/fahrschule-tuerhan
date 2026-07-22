@@ -1,0 +1,21 @@
+<article class="section">
+  <div class="container page-narrow">
+    <div class="section-head">
+      <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}" style="color:var(--asphalt);font-size:0.9rem;">{{ article.published_at | date: '%d.%m.%Y' }}</time>
+      <h1 style="font-size:clamp(1.7rem,5vw,2.4rem);">{{ article.title }}</h1>
+      <hr class="roadline">
+    </div>
+    {%- if article.image != blank -%}
+      <img src="{{ article.image | image_url: width: 1200 }}" alt="{{ article.image.alt | default: article.title | escape }}" style="border-radius:var(--radius);margin-bottom:28px;" width="{{ article.image.width }}" height="{{ article.image.height }}">
+    {%- endif -%}
+    <div class="rte">{{ article.content }}</div>
+    <p style="margin-top:32px;"><a class="btn btn--ghost" href="{{ blog.url }}">Zurück zur Übersicht</a></p>
+  </div>
+</article>
+
+{% schema %}
+{
+  "name": "Artikel",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,72 @@
+<section class="section" id="ueber-mich">
+  <div class="container split {% if section.settings.reverse %}split--reverse{% endif %}">
+    <div class="split__media">
+      {%- if section.settings.image != blank -%}
+        <img
+          src="{{ section.settings.image | image_url: width: 800 }}"
+          srcset="{{ section.settings.image | image_url: width: 480 }} 480w, {{ section.settings.image | image_url: width: 800 }} 800w"
+          sizes="(min-width: 900px) 45vw, 100vw"
+          alt="{{ section.settings.image.alt | default: section.settings.heading | escape }}"
+          width="{{ section.settings.image.width }}"
+          height="{{ section.settings.image.height }}"
+          loading="lazy">
+      {%- endif -%}
+    </div>
+    <div>
+      <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+      <h2>{{ section.settings.heading }}</h2>
+      <div class="rte" style="color:var(--asphalt);">{{ section.settings.text }}</div>
+      <div class="split__stats">
+        {%- for block in section.blocks -%}
+          <div class="split__stat" {{ block.shopify_attributes }}>
+            <b>{{ block.settings.value }}</b>
+            <span>{{ block.settings.label }}</span>
+          </div>
+        {%- endfor -%}
+      </div>
+      {%- if section.settings.link_label != blank and section.settings.link != blank -%}
+        <p style="margin-top:24px;"><a class="btn btn--ghost" href="{{ section.settings.link }}">{{ section.settings.link_label }}</a></p>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Bild & Text",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Kleine Zeile", "default": "Über mich" },
+    { "type": "text", "id": "heading", "label": "Titel", "default": "Mit Spass und Freude zum Erfolg" },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Das Lehren macht mir am meisten Spass an meinem Beruf. Ich sehe gerne die Entwicklung meiner Fahrschüler: ganz nervös am Anfang mit Tempo 20 – und gegen Schluss mit Musik, offenem Fenster und viel Selbstvertrauen unterwegs.</p>"
+    },
+    { "type": "image_picker", "id": "image", "label": "Bild" },
+    { "type": "checkbox", "id": "reverse", "label": "Bild rechts anzeigen", "default": false },
+    { "type": "text", "id": "link_label", "label": "Button-Text" },
+    { "type": "url", "id": "link", "label": "Button-Link" }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Kennzahl",
+      "settings": [
+        { "type": "text", "id": "value", "label": "Wert", "default": "61+" },
+        { "type": "text", "id": "label", "label": "Beschriftung", "default": "Fahrschüler ausgebildet" }
+      ]
+    }
+  ],
+  "max_blocks": 3,
+  "presets": [
+    {
+      "name": "Bild & Text",
+      "blocks": [
+        { "type": "stat", "settings": { "value": "61+", "label": "Fahrschüler ausgebildet" } },
+        { "type": "stat", "settings": { "value": "99 %", "label": "höchst zufrieden" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

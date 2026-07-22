@@ -1,0 +1,15 @@
+{
+  "sections": {
+    "main": {
+      "type": "booking-confirmation",
+      "blocks": {
+        "s1": { "type": "step", "settings": { "text": "Bestätigungs-E-Mail mit Datum, Uhrzeit und Treffpunkt prüfen (auch im Spam-Ordner)." } },
+        "s2": { "type": "step", "settings": { "text": "24 Stunden vor dem Termin bekommst du eine Erinnerung per E-Mail." } },
+        "s3": { "type": "step", "settings": { "text": "Lernfahrausweis mitnehmen und pünktlich am Treffpunkt sein – den Rest machen wir gemeinsam." } }
+      },
+      "block_order": ["s1", "s2", "s3"],
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}

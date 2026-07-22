@@ -1,0 +1,19 @@
+{
+  "sections": {
+    "main": {
+      "type": "faq",
+      "blocks": {
+        "f1": { "type": "faq", "settings": {} },
+        "f2": { "type": "faq", "settings": { "question": "Wo werde ich abgeholt?", "answer": "Beim Buchen wählst du einen Treffpunkt aus – zum Beispiel Bahnhof Buchs SG oder nach Vereinbarung." } },
+        "f3": { "type": "faq", "settings": { "question": "Fahre ich handgeschaltet oder Automat?", "answer": "Beides ist möglich. Gefahren wird im weissen Seat Leon FR." } },
+        "f4": { "type": "faq", "settings": { "question": "Kann ich einen Termin verschieben oder stornieren?", "answer": "Ja, bitte spätestens 24 Stunden vorher telefonisch oder per WhatsApp melden." } },
+        "f5": { "type": "faq", "settings": { "question": "Bietest du auch Verkehrskundeunterricht (VKU) an?", "answer": "Ja, die Anmeldung zum Verkehrskundeunterricht ist möglich – melde dich einfach über das Kontaktformular oder telefonisch." } },
+        "f6": { "type": "faq", "settings": { "question": "In welcher Region finden die Fahrstunden statt?", "answer": "In Liechtenstein und der Region Werdenberg (z. B. Buchs SG). Geprüft wird nach den Regelungen von FL bzw. CH." } }
+      },
+      "block_order": ["f1", "f2", "f3", "f4", "f5", "f6"],
+      "settings": {}
+    },
+    "cta": { "type": "cta-banner", "settings": {} }
+  },
+  "order": ["main", "cta"]
+}

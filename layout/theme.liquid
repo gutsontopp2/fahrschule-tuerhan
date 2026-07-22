@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="{{ settings.color_primary }}">
+  <link rel="canonical" href="{{ canonical_url }}">
+  {%- if settings.favicon != blank -%}
+    <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 64 }}">
+  {%- endif -%}
+
+  {%- render 'meta-tags' -%}
+
+  {%- comment -%} Schriften aus dem Shopify-Fontpicker {%- endcomment -%}
+  {%- liquid
+    assign body_font_bold = settings.type_body_font | font_modify: 'weight', 'bold'
+    assign heading_font = settings.type_heading_font
+  -%}
+  <style>
+    {{ settings.type_body_font | font_face: font_display: 'swap' }}
+    {{ body_font_bold | font_face: font_display: 'swap' }}
+    {{ heading_font | font_face: font_display: 'swap' }}
+
+    :root {
+      --blau: {{ settings.color_primary }};
+      --blau-dunkel: {{ settings.color_primary | color_darken: 12 }};
+      --blau-hell: {{ settings.color_primary | color_lighten: 44 }};
+      --nacht: {{ settings.color_text }};
+      --asphalt: {{ settings.color_text_muted }};
+      --kreide: {{ settings.color_background }};
+      --weiss: #ffffff;
+      --linie: {{ settings.color_border }};
+      --gruen: #1f8a4c;
+      --rot: #c62828;
+      --font-body: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
+      --font-heading: {{ heading_font.family }}, {{ heading_font.fallback_families }};
+      --radius: 10px;
+      --radius-sm: 6px;
+      --shadow: 0 6px 24px rgba(16, 20, 24, 0.08);
+      --container: 1140px;
+    }
+  </style>
+
+  {{ 'base.css' | asset_url | stylesheet_tag }}
+
+  <script>
+    window.themeSettings = {
+      cartCountUrl: '{{ routes.cart_url }}.js',
+      cartAddUrl: '{{ routes.cart_add_url }}.js',
+      cartUrl: '{{ routes.cart_url }}'
+    };
+  </script>
+
+  {{ content_for_header }}
+</head>
+<body>
+  <a class="skip-link" href="#hauptinhalt">Zum Inhalt springen</a>
+
+  {% section 'header' %}
+
+  <main id="hauptinhalt" role="main">
+    {{ content_for_layout }}
+  </main>
+
+  {% section 'footer' %}
+
+  <script src="{{ 'global.js' | asset_url }}" defer></script>
+</body>
+</html>
