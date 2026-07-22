@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Fahrschule Türhan – Buchungsverwaltung</title>
+<style>
+  :root {
+    --blau:#0B5FD0; --blau-dunkel:#0a4ea8; --nacht:#101418; --asphalt:#5C636B;
+    --kreide:#F7F7F4; --linie:#E4E4DE; --gruen:#1f8a4c; --rot:#c62828; --gelb:#b26a00;
+    --radius:10px;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,'Segoe UI',sans-serif; background:var(--kreide); color:var(--nacht); font-size:15px; line-height:1.5; }
+  header { background:#fff; border-bottom:1px solid var(--linie); padding:12px 20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+  header h1 { font-size:1.05rem; margin:0; }
+  main { max-width:1100px; margin:0 auto; padding:20px; }
+  nav.tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+  nav.tabs button { border:1px solid var(--linie); background:#fff; padding:8px 14px; border-radius:999px; cursor:pointer; font-weight:600; }
+  nav.tabs button.active { background:var(--blau); color:#fff; border-color:var(--blau); }
+  .card { background:#fff; border:1px solid var(--linie); border-radius:var(--radius); padding:18px; margin-bottom:18px; }
+  .card h2 { font-size:1rem; margin:0 0 12px; }
+  label { display:block; font-size:0.82rem; font-weight:600; margin-bottom:3px; }
+  input, select, textarea { width:100%; padding:8px 10px; border:1px solid var(--linie); border-radius:6px; font:inherit; }
+  .row { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:10px; }
+  .row > div { flex:1 1 140px; }
+  button.btn { background:var(--blau); color:#fff; border:0; padding:9px 16px; border-radius:8px; font-weight:700; cursor:pointer; }
+  button.btn:hover { background:var(--blau-dunkel); }
+  button.btn.secondary { background:#fff; color:var(--nacht); border:1px solid var(--linie); }
+  button.btn.danger { background:var(--rot); }
+  table { width:100%; border-collapse:collapse; font-size:0.88rem; }
+  th, td { text-align:left; padding:7px 8px; border-bottom:1px solid var(--linie); vertical-align:top; }
+  .status { display:inline-block; padding:2px 9px; border-radius:999px; font-size:0.75rem; font-weight:700; color:#fff; }
+  .status.held { background:var(--gelb); } .status.confirmed { background:var(--gruen); }
+  .status.blocked { background:var(--asphalt); } .status.cancelled { background:#999; }
+  .status.expired { background:#bbb; } .status.needs_review { background:var(--rot); }
+  .msg { padding:10px 14px; border-radius:8px; margin-bottom:14px; display:none; }
+  .msg.error { display:block; background:#fdecea; color:var(--rot); }
+  .msg.ok { display:block; background:#e8f5ee; color:var(--gruen); }
+  #login { max-width:360px; margin:60px auto; }
+  .cal { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+  .cal .head { font-size:0.75rem; font-weight:700; text-align:center; color:var(--asphalt); }
+  .cal .day { min-height:74px; border:1px solid var(--linie); border-radius:6px; padding:4px; font-size:0.72rem; background:#fff; cursor:pointer; }
+  .cal .day.other { opacity:0.35; }
+  .cal .day.today { border-color:var(--blau); border-width:2px; }
+  .cal .day b { display:block; font-size:0.8rem; }
+  .cal .evt { display:block; border-radius:4px; padding:0 3px; margin-top:2px; color:#fff; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+  .toolbar { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:12px; }
+  @media (max-width:600px){ th.opt, td.opt { display:none; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Fahrschule Türhan – Buchungsverwaltung</h1>
+  <button class="btn secondary" id="logoutBtn" style="display:none;">Abmelden</button>
+</header>
+
+<main>
+  <div class="msg" id="msg"></div>
+
+  <!-- Login -->
+  <div class="card" id="login">
+    <h2>Anmelden</h2>
+    <div class="row"><div>
+      <label for="pw">Admin-Passwort</label>
+      <input type="password" id="pw" autocomplete="current-password">
+    </div></div>
+    <button class="btn" id="loginBtn">Anmelden</button>
+  </div>
+
+  <!-- App -->
+  <div id="app" style="display:none;">
+    <nav class="tabs">
+      <button data-tab="calendar" class="active">Kalender</button>
+      <button data-tab="bookings">Buchungen</button>
+      <button data-tab="availability">Arbeitszeiten</button>
+      <button data-tab="absences">Urlaub & Sperren</button>
+      <button data-tab="services">Leistungen</button>
+      <button data-tab="settings">Einstellungen</button>
+    </nav>
+
+    <!-- Kalender -->
+    <section data-panel="calendar">
+      <div class="toolbar">
+        <button class="btn secondary" id="calPrev">‹</button>
+        <strong id="calTitle"></strong>
+        <button class="btn secondary" id="calNext">›</button>
+        <select id="calMode" style="width:auto;">
+          <option value="month">Monat</option>
+          <option value="week">Woche</option>
+          <option value="day">Tag</option>
+        </select>
+      </div>
+      <div class="cal" id="calGrid"></div>
+      <div class="card" style="margin-top:16px;">
+        <h2>Termin manuell hinzufügen / Zeit blockieren</h2>
+        <div class="row">
+          <div><label>Datum</label><input type="date" id="mDate"></div>
+          <div><label>Uhrzeit</label><input type="time" id="mTime" step="300"></div>
+          <div><label>Dauer (Min.)</label><input type="number" id="mDuration" value="50" min="15" max="480"></div>
+          <div><label>Typ</label>
+            <select id="mType">
+              <option value="blocked">Zeit blockieren</option>
+              <option value="confirmed">Termin (manuell bestätigt)</option>
+            </select>
+          </div>
+        </div>
+        <div class="row" id="mCustomerRow" style="display:none;">
+          <div><label>Vorname</label><input id="mFirst"></div>
+          <div><label>Nachname</label><input id="mLast"></div>
+          <div><label>Telefon</label><input id="mPhone"></div>
+          <div><label>Treffpunkt</label><input id="mMeet"></div>
+        </div>
+        <div class="row"><div><label>Notiz</label><input id="mNote"></div></div>
+        <button class="btn" id="mSave">Speichern</button>
+      </div>
+    </section>
+
+    <!-- Buchungen -->
+    <section data-panel="bookings" style="display:none;">
+      <div class="toolbar">
+        <input id="bSearch" placeholder="Suche: Name, E-Mail, Telefon, Bestellnr." style="max-width:280px;">
+        <select id="bStatus" style="width:auto;">
+          <option value="">Alle Status</option>
+          <option value="confirmed">Bestätigt</option>
+          <option value="held">Reserviert</option>
+          <option value="needs_review">Prüfen!</option>
+          <option value="blocked">Blockiert</option>
+          <option value="cancelled">Storniert</option>
+          <option value="expired">Abgelaufen</option>
+        </select>
+        <button class="btn secondary" id="bReload">Aktualisieren</button>
+        <button class="btn secondary" id="bExport">CSV-Export</button>
+      </div>
+      <div class="card" style="overflow-x:auto;">
+        <table>
+          <thead><tr>
+            <th>Datum / Zeit</th><th>Status</th><th>Leistung</th><th>Kunde</th>
+            <th class="opt">Kontakt</th><th class="opt">Treffpunkt</th><th></th>
+          </tr></thead>
+          <tbody id="bTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Arbeitszeiten -->
+    <section data-panel="availability" style="display:none;">
+      <div class="card">
+        <h2>Wiederkehrende Arbeitszeiten</h2>
+        <p style="color:var(--asphalt);font-size:0.85rem;">Mehrere Fenster pro Tag sind möglich (z. B. 08:00–12:00 und 13:30–17:00 – die Lücke ist automatisch Pause).</p>
+        <table><thead><tr><th>Tag</th><th>Von</th><th>Bis</th><th></th></tr></thead><tbody id="rTable"></tbody></table>
+        <div class="row" style="margin-top:12px;">
+          <div><label>Wochentag</label>
+            <select id="rDay"><option value="1">Montag</option><option value="2">Dienstag</option><option value="3">Mittwoch</option><option value="4">Donnerstag</option><option value="5">Freitag</option><option value="6">Samstag</option><option value="7">Sonntag</option></select>
+          </div>
+          <div><label>Von</label><input type="time" id="rFrom" value="08:00"></div>
+          <div><label>Bis</label><input type="time" id="rTo" value="17:00"></div>
+        </div>
+        <button class="btn" id="rAdd">Fenster hinzufügen</button>
+      </div>
+      <div class="card">
+        <h2>Manuell freigegebene Startzeiten</h2>
+        <table><thead><tr><th>Start</th><th>Notiz</th><th></th></tr></thead><tbody id="msTable"></tbody></table>
+        <div class="row" style="margin-top:12px;">
+          <div><label>Datum</label><input type="date" id="msDate"></div>
+          <div><label>Uhrzeit</label><input type="time" id="msTime"></div>
+          <div><label>Notiz</label><input id="msNote"></div>
+        </div>
+        <button class="btn" id="msAdd">Startzeit freigeben</button>
+      </div>
+    </section>
+
+    <!-- Urlaub & Sperren -->
+    <section data-panel="absences" style="display:none;">
+      <div class="card">
+        <h2>Urlaub, Feiertage, Sperren & Sonderöffnungen</h2>
+        <table><thead><tr><th>Datum</th><th>Zeit</th><th>Typ</th><th>Grund</th><th></th></tr></thead><tbody id="eTable"></tbody></table>
+        <div class="row" style="margin-top:12px;">
+          <div><label>Von (Datum)</label><input type="date" id="eFrom"></div>
+          <div><label>Bis (Datum, optional)</label><input type="date" id="eTo"></div>
+          <div><label>Von (Zeit, optional)</label><input type="time" id="eStart"></div>
+          <div><label>Bis (Zeit, optional)</label><input type="time" id="eEnd"></div>
+        </div>
+        <div class="row">
+          <div><label>Typ</label>
+            <select id="eType">
+              <option value="vacation">Urlaub</option>
+              <option value="holiday">Feiertag</option>
+              <option value="blocked">Gesperrt</option>
+              <option value="available">Sonderöffnung (ersetzt Wochenplan)</option>
+            </select>
+          </div>
+          <div><label>Grund (optional)</label><input id="eReason"></div>
+        </div>
+        <button class="btn" id="eAdd">Eintragen</button>
+      </div>
+    </section>
+
+    <!-- Leistungen -->
+    <section data-panel="services" style="display:none;">
+      <div class="card">
+        <h2>Leistungen (mit Shopify-Produkt verknüpft)</h2>
+        <table><thead><tr><th>Name</th><th>Dauer</th><th>Puffer</th><th>Getriebe</th><th>Aktiv</th></tr></thead><tbody id="sTable"></tbody></table>
+        <p style="color:var(--asphalt);font-size:0.85rem;margin-top:10px;">
+          Produkt- und Varianten-ID findest du im Shopify-Admin in der URL des Produkts
+          bzw. der Variante.
+        </p>
+        <div class="row">
+          <div><label>Name</label><input id="sName" placeholder="Fahrstunde Handschaltung (50 Min.)"></div>
+          <div><label>Produkt-ID</label><input id="sPid"></div>
+          <div><label>Varianten-ID</label><input id="sVid"></div>
+        </div>
+        <div class="row">
+          <div><label>Dauer (Min.)</label><input type="number" id="sDur" value="50"></div>
+          <div><label>Puffer (Min., leer = global)</label><input type="number" id="sBuf" placeholder="global"></div>
+          <div><label>Getriebe</label>
+            <select id="sVeh"><option value="handschaltung">Handschaltung</option><option value="automat">Automat</option><option value="beide">Beide (Kunde wählt)</option></select>
+          </div>
+        </div>
+        <button class="btn" id="sAdd">Leistung speichern</button>
+      </div>
+    </section>
+
+    <!-- Einstellungen -->
+    <section data-panel="settings" style="display:none;">
+      <div class="card">
+        <h2>Buchungsregeln</h2>
+        <div class="row">
+          <div><label>Puffer zwischen Fahrstunden (10–20 Min.)</label><input type="number" id="setBuffer" min="10" max="20"></div>
+          <div><label>Reservierungsdauer / Hold (Min.)</label><input type="number" id="setHold" min="5" max="60"></div>
+          <div><label>Minimale Vorlaufzeit (Min.)</label><input type="number" id="setLead" min="0"></div>
+        </div>
+        <div class="row">
+          <div><label>Maximale Vorausbuchung (Tage)</label><input type="number" id="setAdvance" min="1" max="365"></div>
+          <div><label>Storno-/Verschiebefrist (Std.)</label><input type="number" id="setCancel" min="0" max="168"></div>
+        </div>
+        <button class="btn" id="setSave">Speichern</button>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  var msg = document.getElementById('msg');
+  function show(type, text) {
+    msg.className = 'msg ' + type; msg.textContent = text;
+    setTimeout(function(){ msg.className = 'msg'; }, 6000);
+  }
+  function api(path, opts) {
+    opts = opts || {};
+    opts.headers = Object.assign({ 'Content-Type': 'application/json', 'X-Requested-With': 'fetch' }, opts.headers || {});
+    opts.credentials = 'same-origin';
+    return fetch('/admin/api' + path, opts).then(function (r) {
+      return r.json().catch(function(){ return {}; }).then(function (body) {
+        if (r.status === 401 && path !== '/login') { showLogin(); throw new Error(body.message || 'Bitte anmelden.'); }
+        if (!r.ok) throw new Error(body.message || 'Fehler');
+        return body;
+      });
+    });
+  }
+  var STATUS_LABEL = { held:'Reserviert', confirmed:'Bestätigt', blocked:'Blockiert', cancelled:'Storniert', expired:'Abgelaufen', needs_review:'Prüfen!' };
+  var STATUS_COLOR = { held:'#b26a00', confirmed:'#1f8a4c', blocked:'#5C636B', cancelled:'#999', expired:'#bbb', needs_review:'#c62828' };
+
+  /* ---------- Login ---------- */
+  var loginEl = document.getElementById('login'), appEl = document.getElementById('app');
+  function showLogin(){ loginEl.style.display=''; appEl.style.display='none'; document.getElementById('logoutBtn').style.display='none'; }
+  function showApp(){ loginEl.style.display='none'; appEl.style.display=''; document.getElementById('logoutBtn').style.display=''; loadAll(); }
+  document.getElementById('loginBtn').addEventListener('click', function () {
+    api('/login', { method:'POST', body: JSON.stringify({ password: document.getElementById('pw').value }) })
+      .then(function(){ document.getElementById('pw').value=''; showApp(); })
+      .catch(function(e){ show('error', e.message); });
+  });
+  document.getElementById('pw').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('loginBtn').click(); });
+  document.getElementById('logoutBtn').addEventListener('click', function () {
+    api('/logout', { method:'POST' }).then(showLogin).catch(function(){ showLogin(); });
+  });
+  fetch('/admin/session', { credentials:'same-origin' }).then(function(r){ return r.json(); })
+    .then(function(s){ s.authenticated ? showApp() : showLogin(); }).catch(showLogin);
+
+  /* ---------- Tabs ---------- */
+  document.querySelectorAll('nav.tabs button').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('nav.tabs button').forEach(function(b){ b.classList.toggle('active', b===btn); });
+      document.querySelectorAll('[data-panel]').forEach(function(p){ p.style.display = p.getAttribute('data-panel')===btn.getAttribute('data-tab') ? '' : 'none'; });
+    });
+  });
+
+  /* ---------- Kalender ---------- */
+  var calCursor = new Date(); calCursor.setDate(1);
+  var calMode = 'month';
+  var monthFmt = new Intl.DateTimeFormat('de-CH', { month:'long', year:'numeric' });
+  var WD = ['Mo','Di','Mi','Do','Fr','Sa','So'];
+  function pad(n){ return n<10 ? '0'+n : ''+n; }
+  function iso(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+
+  function calRange() {
+    var from, to;
+    if (calMode === 'month') {
+      from = new Date(calCursor.getFullYear(), calCursor.getMonth(), 1);
+      to = new Date(calCursor.getFullYear(), calCursor.getMonth()+1, 0);
+    } else if (calMode === 'week') {
+      var d = new Date(calCursor); var day = (d.getDay()+6)%7;
+      from = new Date(d); from.setDate(d.getDate()-day);
+      to = new Date(from); to.setDate(from.getDate()+6);
+    } else { from = new Date(calCursor); to = new Date(calCursor); }
+    return { from: from, to: to };
+  }
+
+  function renderCalendar() {
+    var range = calRange();
+    document.getElementById('calTitle').textContent =
+      calMode==='month' ? monthFmt.format(calCursor) : iso(range.from) + ' – ' + iso(range.to);
+    api('/bookings?from='+iso(range.from)+'&to='+iso(range.to)+'&status=held,confirmed,blocked,needs_review')
+      .then(function (data) {
+        var byDay = {};
+        data.bookings.forEach(function (b) {
+          var d = new Date(b.start_at);
+          var key = iso(d);
+          (byDay[key] = byDay[key] || []).push(b);
+        });
+        var grid = document.getElementById('calGrid'); grid.innerHTML = '';
+        WD.forEach(function (w) { var el=document.createElement('div'); el.className='head'; el.textContent=w; grid.appendChild(el); });
+        var start = new Date(range.from);
+        if (calMode === 'month') { var lead=(start.getDay()+6)%7; start.setDate(start.getDate()-lead); }
+        var days = calMode==='month' ? 42 : (calMode==='week' ? 7 : 1);
+        grid.style.gridTemplateColumns = calMode==='day' ? '1fr' : 'repeat(7,1fr)';
+        var todayIso = iso(new Date());
+        for (var i=0;i<days;i++) {
+          var d = new Date(start); d.setDate(start.getDate()+i);
+          var key = iso(d);
+          var cell = document.createElement('div');
+          cell.className='day' + (d.getMonth()!==calCursor.getMonth() && calMode==='month' ? ' other':'') + (key===todayIso?' today':'');
+          cell.innerHTML = '<b>'+d.getDate()+'</b>';
+          (byDay[key]||[]).sort(function(a,b){ return a.start_at<b.start_at?-1:1; }).forEach(function (b) {
+            var t = new Date(b.start_at);
+            var evt = document.createElement('span');
+            evt.className='evt'; evt.style.background = STATUS_COLOR[b.status]||'#888';
+            evt.textContent = pad(t.getHours())+':'+pad(t.getMinutes())+' '+(b.customer_last_name||b.service_name||STATUS_LABEL[b.status]);
+            evt.title = (b.service_name||'')+' '+(b.customer_first_name||'')+' '+(b.customer_last_name||'');
+            cell.appendChild(evt);
+          });
+          (function(k){ cell.addEventListener('click', function(){ document.getElementById('mDate').value=k; }); })(key);
+          grid.appendChild(cell);
+        }
+      }).catch(function(e){ show('error', e.message); });
+  }
+  document.getElementById('calPrev').addEventListener('click', function(){ shiftCal(-1); });
+  document.getElementById('calNext').addEventListener('click', function(){ shiftCal(1); });
+  document.getElementById('calMode').addEventListener('change', function(){ calMode=this.value; renderCalendar(); });
+  function shiftCal(dir) {
+    if (calMode==='month') calCursor.setMonth(calCursor.getMonth()+dir);
+    else if (calMode==='week') calCursor.setDate(calCursor.getDate()+7*dir);
+    else calCursor.setDate(calCursor.getDate()+dir);
+    renderCalendar();
+  }
+  document.getElementById('mType').addEventListener('change', function () {
+    document.getElementById('mCustomerRow').style.display = this.value==='confirmed' ? '' : 'none';
+  });
+  document.getElementById('mSave').addEventListener('click', function () {
+    var body = {
+      date: document.getElementById('mDate').value,
+      time: document.getElementById('mTime').value,
+      durationMinutes: Number(document.getElementById('mDuration').value),
+      type: document.getElementById('mType').value,
+      firstName: document.getElementById('mFirst').value || undefined,
+      lastName: document.getElementById('mLast').value || undefined,
+      phone: document.getElementById('mPhone').value || undefined,
+      meetingPoint: document.getElementById('mMeet').value || undefined,
+      note: document.getElementById('mNote').value || undefined
+    };
+    if (!body.date || !body.time) { show('error','Bitte Datum und Uhrzeit angeben.'); return; }
+    api('/bookings', { method:'POST', body: JSON.stringify(body) })
+      .then(function(){ show('ok','Gespeichert.'); renderCalendar(); })
+      .catch(function(e){ show('error', e.message); });
+  });
+
+  /* ---------- Buchungen ---------- */
+  function loadBookings() {
+    var q = [];
+    var s = document.getElementById('bSearch').value.trim();
+    var st = document.getElementById('bStatus').value;
+    if (s) q.push('search='+encodeURIComponent(s));
+    if (st) q.push('status='+encodeURIComponent(st));
+    api('/bookings' + (q.length?'?'+q.join('&'):''))
+      .then(function (data) {
+        var tbody = document.getElementById('bTable'); tbody.innerHTML='';
+        data.bookings.forEach(function (b) {
+          var t1 = new Date(b.start_at), t2 = new Date(b.lesson_end_at);
+          var tr = document.createElement('tr');
+          function td(html, cls){ var el=document.createElement('td'); if(cls) el.className=cls; el.innerHTML=html; tr.appendChild(el); return el; }
+          td(iso(t1)+'<br>'+pad(t1.getHours())+':'+pad(t1.getMinutes())+'–'+pad(t2.getHours())+':'+pad(t2.getMinutes()));
+          td('<span class="status '+b.status+'">'+(STATUS_LABEL[b.status]||b.status)+'</span>' + (b.cancel_reason?'<br><small>'+escapeHtml(b.cancel_reason)+'</small>':''));
+          td(escapeHtml(b.service_name||'–') + (b.vehicle_type?'<br><small>'+b.vehicle_type+'</small>':''));
+          td(escapeHtml(((b.customer_first_name||'')+' '+(b.customer_last_name||'')).trim()||'–') + (b.is_first_lesson?'<br><small>Erste Fahrstunde</small>':''));
+          td(escapeHtml(b.customer_phone||'')+'<br><small>'+escapeHtml(b.customer_email||'')+'</small>','opt');
+          td(escapeHtml(b.meeting_point||'–'),'opt');
+          var actions = td('');
+          if (['held','confirmed','blocked','needs_review'].indexOf(b.status)>=0) {
+            var mv = document.createElement('button'); mv.className='btn secondary'; mv.textContent='Verschieben'; mv.style.marginRight='6px';
+            mv.addEventListener('click', function(){ moveBooking(b.id); });
+            var cx = document.createElement('button'); cx.className='btn danger'; cx.textContent='Stornieren';
+            cx.addEventListener('click', function(){
+              if (confirm('Termin wirklich stornieren?')) {
+                api('/bookings/'+b.id+'/cancel', { method:'POST', body:'{}' })
+                  .then(function(){ show('ok','Storniert.'); loadBookings(); renderCalendar(); })
+                  .catch(function(e){ show('error', e.message); });
+              }
+            });
+            actions.appendChild(mv); actions.appendChild(cx);
+          }
+          tbody.appendChild(tr);
+        });
+      }).catch(function(e){ show('error', e.message); });
+  }
+  function moveBooking(id) {
+    var date = prompt('Neues Datum (JJJJ-MM-TT):'); if (!date) return;
+    var time = prompt('Neue Uhrzeit (HH:MM):'); if (!time) return;
+    api('/bookings/'+id+'/move', { method:'POST', body: JSON.stringify({ date:date, time:time }) })
+      .then(function(){ show('ok','Verschoben.'); loadBookings(); renderCalendar(); })
+      .catch(function(e){ show('error', e.message); });
+  }
+  document.getElementById('bReload').addEventListener('click', loadBookings);
+  document.getElementById('bSearch').addEventListener('keydown', function(e){ if(e.key==='Enter') loadBookings(); });
+  document.getElementById('bStatus').addEventListener('change', loadBookings);
+  document.getElementById('bExport').addEventListener('click', function(){ window.location.href='/admin/api/bookings.csv'; });
+
+  /* ---------- Arbeitszeiten ---------- */
+  var DAYS = ['','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'];
+  function loadRules() {
+    api('/rules').then(function (data) {
+      var tbody = document.getElementById('rTable'); tbody.innerHTML='';
+      data.rules.forEach(function (r) {
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td>'+DAYS[r.weekday]+'</td><td>'+String(r.start_time).slice(0,5)+'</td><td>'+String(r.end_time).slice(0,5)+'</td>';
+        var td = document.createElement('td');
+        var del = document.createElement('button'); del.className='btn danger'; del.textContent='Löschen';
+        del.addEventListener('click', function(){
+          api('/rules/'+r.id, { method:'DELETE' }).then(loadRules).catch(function(e){ show('error', e.message); });
+        });
+        td.appendChild(del); tr.appendChild(td); tbody.appendChild(tr);
+      });
+    }).catch(function(e){ show('error', e.message); });
+  }
+  document.getElementById('rAdd').addEventListener('click', function () {
+    api('/rules', { method:'POST', body: JSON.stringify({
+      weekday: Number(document.getElementById('rDay').value),
+      startTime: document.getElementById('rFrom').value,
+      endTime: document.getElementById('rTo').value,
+      active: true
+    })}).then(function(){ show('ok','Gespeichert.'); loadRules(); }).catch(function(e){ show('error', e.message); });
+  });
+
+  function loadManualSlots() {
+    api('/manual-slots').then(function (data) {
+      var tbody = document.getElementById('msTable'); tbody.innerHTML='';
+      data.slots.forEach(function (s) {
+        var d = new Date(s.start_at);
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td>'+iso(d)+' '+pad(d.getHours())+':'+pad(d.getMinutes())+'</td><td>'+escapeHtml(s.note||'')+'</td>';
+        var td = document.createElement('td');
+        var del = document.createElement('button'); del.className='btn danger'; del.textContent='Löschen';
+        del.addEventListener('click', function(){
+          api('/manual-slots/'+s.id, { method:'DELETE' }).then(loadManualSlots).catch(function(e){ show('error', e.message); });
+        });
+        td.appendChild(del); tr.appendChild(td); tbody.appendChild(tr);
+      });
+    }).catch(function(e){ show('error', e.message); });
+  }
+  document.getElementById('msAdd').addEventListener('click', function () {
+    api('/manual-slots', { method:'POST', body: JSON.stringify({
+      date: document.getElementById('msDate').value,
+      time: document.getElementById('msTime').value,
+      note: document.getElementById('msNote').value || undefined
+    })}).then(function(){ show('ok','Freigegeben.'); loadManualSlots(); }).catch(function(e){ show('error', e.message); });
+  });
+
+  /* ---------- Ausnahmen ---------- */
+  var TYPE_LABEL = { vacation:'Urlaub', holiday:'Feiertag', blocked:'Gesperrt', available:'Sonderöffnung' };
+  function loadExceptions() {
+    api('/exceptions').then(function (data) {
+      var tbody = document.getElementById('eTable'); tbody.innerHTML='';
+      data.exceptions.forEach(function (e) {
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td>'+e.date+'</td><td>'+(e.start_time?String(e.start_time).slice(0,5)+'–'+String(e.end_time).slice(0,5):'ganzer Tag')+'</td><td>'+(TYPE_LABEL[e.type]||e.type)+'</td><td>'+escapeHtml(e.reason||'')+'</td>';
+        var td = document.createElement('td');
+        var del = document.createElement('button'); del.className='btn danger'; del.textContent='Löschen';
+        del.addEventListener('click', function(){
+          api('/exceptions/'+e.id, { method:'DELETE' }).then(loadExceptions).catch(function(err){ show('error', err.message); });
+        });
+        td.appendChild(del); tr.appendChild(td); tbody.appendChild(tr);
+      });
+    }).catch(function(e){ show('error', e.message); });
+  }
+  document.getElementById('eAdd').addEventListener('click', function () {
+    api('/exceptions', { method:'POST', body: JSON.stringify({
+      dateFrom: document.getElementById('eFrom').value,
+      dateTo: document.getElementById('eTo').value || undefined,
+      startTime: document.getElementById('eStart').value || undefined,
+      endTime: document.getElementById('eEnd').value || undefined,
+      type: document.getElementById('eType').value,
+      reason: document.getElementById('eReason').value || undefined
+    })}).then(function(){ show('ok','Eingetragen.'); loadExceptions(); renderCalendar(); }).catch(function(e){ show('error', e.message); });
+  });
+
+  /* ---------- Leistungen ---------- */
+  function loadServices() {
+    api('/services').then(function (data) {
+      var tbody = document.getElementById('sTable'); tbody.innerHTML='';
+      data.services.forEach(function (s) {
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td>'+escapeHtml(s.name)+'</td><td>'+s.duration_minutes+' Min.</td><td>'+(s.buffer_minutes===null?'global':s.buffer_minutes+' Min.')+'</td><td>'+s.vehicle_type+'</td>';
+        var td = document.createElement('td');
+        var tgl = document.createElement('button'); tgl.className='btn secondary'; tgl.textContent = s.active?'Deaktivieren':'Aktivieren';
+        tgl.addEventListener('click', function(){
+          api('/services/'+s.id, { method:'PATCH', body: JSON.stringify({ active: !s.active }) })
+            .then(loadServices).catch(function(e){ show('error', e.message); });
+        });
+        td.appendChild(tgl); tr.appendChild(td); tbody.appendChild(tr);
+      });
+    }).catch(function(e){ show('error', e.message); });
+  }
+  document.getElementById('sAdd').addEventListener('click', function () {
+    var buf = document.getElementById('sBuf').value;
+    api('/services', { method:'POST', body: JSON.stringify({
+      name: document.getElementById('sName').value,
+      shopifyProductId: document.getElementById('sPid').value,
+      shopifyVariantId: document.getElementById('sVid').value,
+      durationMinutes: Number(document.getElementById('sDur').value),
+      bufferMinutes: buf === '' ? null : Number(buf),
+      vehicleType: document.getElementById('sVeh').value,
+      active: true
+    })}).then(function(){ show('ok','Gespeichert.'); loadServices(); }).catch(function(e){ show('error', e.message); });
+  });
+
+  /* ---------- Einstellungen ---------- */
+  function loadSettings() {
+    api('/settings').then(function (data) {
+      document.getElementById('setBuffer').value = data.settings.bufferMinutes;
+      document.getElementById('setHold').value = data.settings.holdMinutes;
+      document.getElementById('setLead').value = data.settings.minLeadMinutes;
+      document.getElementById('setAdvance').value = data.settings.maxAdvanceDays;
+      document.getElementById('setCancel').value = data.settings.cancelWindowHours;
+    }).catch(function(e){ show('error', e.message); });
+  }
+  document.getElementById('setSave').addEventListener('click', function () {
+    api('/settings', { method:'PUT', body: JSON.stringify({
+      bufferMinutes: Number(document.getElementById('setBuffer').value),
+      holdMinutes: Number(document.getElementById('setHold').value),
+      minLeadMinutes: Number(document.getElementById('setLead').value),
+      maxAdvanceDays: Number(document.getElementById('setAdvance').value),
+      cancelWindowHours: Number(document.getElementById('setCancel').value)
+    })}).then(function(){ show('ok','Gespeichert.'); }).catch(function(e){ show('error', e.message); });
+  });
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c];
+    });
+  }
+
+  function loadAll() {
+    renderCalendar(); loadBookings(); loadRules(); loadManualSlots();
+    loadExceptions(); loadServices(); loadSettings();
+  }
+})();
+</script>
+</body>
+</html>

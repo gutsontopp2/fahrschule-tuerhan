@@ -1,0 +1,27 @@
+# Shopify-App-Konfiguration (Referenz für die Einrichtung im Shopify-Admin
+# bzw. im Partner-Dashboard). Die Werte hier dokumentieren die benötigte
+# Konfiguration – App-Proxy und Webhooks werden bei einer Custom App im
+# Admin bzw. per API eingerichtet.
+
+name = "Fahrschule Türhan Buchung"
+
+# App-Proxy: Storefront-Anfragen an das Backend
+# https://<shop>/apps/booking/*  →  https://<BACKEND-DOMAIN>/proxy/*
+[app_proxy]
+url = "https://BACKEND-DOMAIN-HIER-EINTRAGEN/proxy"
+subpath = "booking"
+prefix = "apps"
+
+# Benötigte Webhooks (Ziel-URLs auf dem Backend):
+#   orders/paid              → https://BACKEND-DOMAIN/webhooks/orders-paid
+#   orders/cancelled         → https://BACKEND-DOMAIN/webhooks/orders-cancelled
+#   refunds/create           → https://BACKEND-DOMAIN/webhooks/refunds-create
+#   customers/data_request   → https://BACKEND-DOMAIN/webhooks/customers-data-request
+#   customers/redact         → https://BACKEND-DOMAIN/webhooks/customers-redact
+#   shop/redact              → https://BACKEND-DOMAIN/webhooks/shop-redact
+
+# Benötigte Admin-API-Zugriffsbereiche der Custom App:
+#   read_products  (Produkt-/Varianten-IDs für Leistungen nachschlagen)
+#   read_orders    (optional, zur Kontrolle)
+# Die Webhook-Registrierung einer Custom App erfolgt im Shopify-Admin unter
+# Einstellungen → Benachrichtigungen → Webhooks (Format JSON) oder per Admin-API.
