@@ -119,27 +119,17 @@
     "settings": [
       {
         "type": "paragraph",
-        "content": "Das Buchungssystem benötigt das zugehörige Backend (Custom App). Trage hier die Basis-URL deines Backends ein, z. B. https://buchung.fahrschule-tuerhan.li"
-      },
-      {
-        "type": "text",
-        "id": "booking_backend_url",
-        "label": "Backend-URL (ohne Slash am Ende)"
+        "content": "Die Online-Buchung läuft über die Buchungs-App (Custom App) und den Shopify App Proxy /apps/booking. Einrichtung: siehe booking-app/README.md im Theme-Repository."
       },
       {
         "type": "range",
         "id": "booking_default_duration",
-        "label": "Standarddauer einer Fahrstunde (Minuten)",
+        "label": "Angezeigte Standarddauer einer Fahrstunde (Minuten)",
         "min": 30,
         "max": 120,
         "step": 5,
-        "default": 50
-      },
-      {
-        "type": "checkbox",
-        "id": "booking_show_instructor",
-        "label": "Fahrlehrer-Auswahl anzeigen",
-        "default": true
+        "default": 50,
+        "info": "Nur Anzeige auf Produktkarten. Die verbindliche Dauer pro Leistung wird in der Buchungs-App verwaltet."
       },
       {
         "type": "textarea",

@@ -485,6 +485,22 @@ ul { padding-left: 1.2em; }
   box-shadow: 0 0 0 3px var(--blau-hell);
 }
 .form-note { font-size: 0.82rem; color: var(--asphalt); }
+.form-field--checkbox label {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-weight: 400;
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+.form-field--checkbox input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  min-height: 0;
+  flex: none;
+  margin-top: 2px;
+  accent-color: var(--blau);
+}
 .form-success {
   background: #e8f5ec;
   border: 1px solid var(--gruen);
@@ -500,6 +516,50 @@ ul { padding-left: 1.2em; }
   padding: 14px 16px;
 }
 .form-errors ul { margin: 6px 0 0; }
+
+/* ---------- Vertrauensleiste ---------- */
+.trust-bar { background: var(--weiss); border-block: 1px solid var(--linie); padding: 18px 0; }
+.trust-bar__inner {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px 20px;
+}
+@media (min-width: 900px) { .trust-bar__inner { grid-template-columns: repeat(4, 1fr); } }
+.trust-bar__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+/* ---------- Weg zum Führerschein ---------- */
+.steps-list { list-style: none; margin: 0 auto; padding: 0; max-width: 720px; display: grid; gap: 22px; }
+.steps-list__item { display: flex; gap: 18px; align-items: flex-start; }
+.steps-list__item h3 { margin-bottom: 4px; }
+.steps-list__item p { color: var(--asphalt); margin-bottom: 4px; }
+.steps-list__num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--blau);
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+}
+.steps-list__link { font-size: 0.9rem; font-weight: 600; }
+.steps-checked {
+  max-width: 720px;
+  margin: 32px auto 0;
+  font-size: 0.85rem;
+  color: var(--asphalt);
+  border-top: 1px dashed var(--linie);
+  padding-top: 16px;
+}
 
 /* ---------- CTA-Banner ---------- */
 .cta-banner { text-align: center; }

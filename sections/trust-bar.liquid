@@ -1,0 +1,53 @@
+{%- comment -%}
+  Vertrauensleiste direkt unter dem Hero: kurze, sachliche Fakten.
+{%- endcomment -%}
+<section class="trust-bar" aria-label="Auf einen Blick">
+  <div class="container trust-bar__inner">
+    {%- for block in section.blocks -%}
+      <div class="trust-bar__item" {{ block.shopify_attributes }}>
+        <span class="l-tile l-tile--sm" aria-hidden="true">{% render 'icon', name: block.settings.icon %}</span>
+        <span>{{ block.settings.text }}</span>
+      </div>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Vertrauensleiste",
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Eintrag",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "clock", "label": "Uhr" },
+            { "value": "car", "label": "Auto" },
+            { "value": "pin", "label": "Standort" },
+            { "value": "calendar", "label": "Kalender" },
+            { "value": "check", "label": "Haken" }
+          ],
+          "default": "check"
+        },
+        { "type": "text", "id": "text", "label": "Text", "default": "50 Minuten pro Fahrstunde" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Vertrauensleiste",
+      "blocks": [
+        { "type": "item", "settings": { "icon": "clock", "text": "50 Minuten pro Fahrstunde" } },
+        { "type": "item", "settings": { "icon": "car", "text": "Handschaltung & Automat" } },
+        { "type": "item", "settings": { "icon": "pin", "text": "Liechtenstein & Region Werdenberg" } },
+        { "type": "item", "settings": { "icon": "calendar", "text": "Einfache Online-Buchung" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

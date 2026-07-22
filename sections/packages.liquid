@@ -15,7 +15,11 @@
     </div>
 
     {%- if col == blank or col.products.size == 0 -%}
-      <p class="text-center" style="color:var(--asphalt);">Lege im Shopify-Admin Produkte für deine Fahrstunden an und wähle die Kollektion in den Abschnitts-Einstellungen aus.</p>
+      {%- if request.design_mode -%}
+        <p class="text-center" style="color:var(--asphalt);">Nur im Theme-Editor sichtbar: Lege im Shopify-Admin Produkte für die Fahrstunden an und wähle die Kollektion in den Abschnitts-Einstellungen aus.</p>
+      {%- else -%}
+        <p class="text-center" style="color:var(--asphalt);">Alle Angebote und Preise erhältst du gerne auf Anfrage – ruf mich an oder schreib mir per WhatsApp.</p>
+      {%- endif -%}
     {%- else -%}
       <div class="packages">
         {%- for product in col.products limit: section.settings.limit -%}
@@ -36,7 +40,7 @@
   "settings": [
     { "type": "text", "id": "eyebrow", "label": "Kleine Zeile", "default": "Angebot" },
     { "type": "text", "id": "heading", "label": "Titel", "default": "Fahrstunden & Pakete" },
-    { "type": "textarea", "id": "text", "label": "Text", "default": "Alle Preise inklusive Abholung nach Vereinbarung. Bezahlt wird sicher über den Shopify-Checkout – per Karte oder TWINT." },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Abholung am vereinbarten Treffpunkt. Bezahlt wird sicher online über den Shopify-Checkout." },
     { "type": "collection", "id": "collection", "label": "Kollektion mit Fahrstunden" },
     { "type": "product", "id": "featured_product", "label": "Hervorgehobenes Produkt (Beliebt-Badge)" },
     { "type": "range", "id": "limit", "label": "Maximale Anzahl", "min": 3, "max": 12, "step": 1, "default": 6 }

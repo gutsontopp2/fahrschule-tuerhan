@@ -15,8 +15,11 @@
       <p>{{ section.settings.text }}</p>
       <div class="hero__actions">
         <a class="btn btn--primary" href="{{ booking_url }}">{{ section.settings.cta_label }}</a>
+        {%- if settings.contact_whatsapp != blank -%}
+          <a class="btn btn--ghost" href="https://wa.me/{{ settings.contact_whatsapp }}" target="_blank" rel="noopener">{% render 'icon', name: 'chat' %} WhatsApp schreiben</a>
+        {%- endif -%}
         {%- if settings.contact_phone != blank -%}
-          <a class="btn btn--ghost" href="tel:{{ settings.contact_phone | remove: ' ' }}">{% render 'icon', name: 'phone' %} Anrufen</a>
+          <a class="btn btn--ghost" href="tel:{{ settings.contact_phone | remove: ' ' }}">{% render 'icon', name: 'phone' %} Jetzt anrufen</a>
         {%- endif -%}
       </div>
       <div class="hero__stats">

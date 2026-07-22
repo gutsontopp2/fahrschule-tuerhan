@@ -1,13 +1,16 @@
 /* ============================================================
    Fahrschule Türhan – Buchungs-Widget
    Ablauf:
-   1) Fahrstundenart wählen  2) Fahrlehrer wählen (optional)
-   3) Tag im Kalender wählen 4) Uhrzeit wählen
-   5) Daten eingeben         6) Reservieren -> Warenkorb -> Checkout
-   Die Verfügbarkeit kommt live vom Backend (Custom App).
-   Der Termin wird serverseitig atomar reserviert; erst danach
-   wird das Produkt mit Line-Item-Properties in den Warenkorb
-   gelegt und zum Shopify-Checkout weitergeleitet.
+   1) Fahrstundenart wählen   2) Tag im Kalender wählen
+   3) Uhrzeit wählen          4) Daten eingeben + Bedingungen
+   5) Reservieren -> Warenkorb -> Shopify-Checkout
+
+   Die Verfügbarkeit kommt live vom Backend über den Shopify
+   App Proxy (/apps/booking/*). Der Termin wird serverseitig
+   atomar reserviert (Datenbank-Constraint gegen Doppelbuchung);
+   erst danach wird das Produkt mit Line-Item-Properties in den
+   Warenkorb gelegt und zum Shopify-Checkout weitergeleitet.
+   Es werden keine Kundendaten im Browser gespeichert.
    ============================================================ */
 (function () {
   'use strict';
@@ -22,19 +25,10 @@
   try {
     cfg = JSON.parse(configEl.textContent);
   } catch (e) {
-    console.error('Buchung: Konfiguration konnte nicht gelesen werden.', e);
     return;
   }
 
-  if (!cfg.backendUrl) {
-    var offline = root.querySelector('[data-booking-offline]');
-    if (offline) offline.hidden = false;
-    var app = root.querySelector('[data-booking-app]');
-    if (app) app.hidden = true;
-    return;
-  }
-
-  var API = cfg.backendUrl.replace(/\/+$/, '');
+  var API = (cfg.proxyPath || '/apps/booking').replace(/\/+$/, '');
   var WEEKDAYS = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
   var dateFmt = new Intl.DateTimeFormat('de-CH', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   var monthFmt = new Intl.DateTimeFormat('de-CH', { month: 'long', year: 'numeric' });
@@ -42,27 +36,26 @@
   /* ---------- Zustand ---------- */
   var state = {
     product: null,           // gewählte Fahrstundenart (aus cfg.products)
-    instructor: null,        // { id, name }
-    instructors: [],
+    service: null,           // zugehörige Backend-Leistung { id, vehicleType }
+    services: null,          // Liste vom Backend (variantId -> Leistung)
     date: null,              // 'YYYY-MM-DD'
     time: null,              // 'HH:MM'
     monthCursor: startOfMonth(new Date()),
     availability: {},        // { 'YYYY-MM-DD': ['08:00', ...] }
-    availabilityKey: '',     // Cache-Schlüssel (Monat+Lehrer+Dauer)
-    reservation: null,       // { id, expiresAt }
+    availabilityKey: '',
+    reservation: null,       // { id, bookingToken, expiresAt }
     timerInterval: null,
-    submitting: false
+    submitting: false,
+    backendDown: false
   };
 
   /* ---------- Elemente ---------- */
   var els = {
     steps: root.querySelectorAll('[data-step-indicator] li'),
-    panelLesson: root.querySelector('[data-panel="lesson"]'),
-    panelInstructor: root.querySelector('[data-panel="instructor"]'),
     panelDate: root.querySelector('[data-panel="date"]'),
     panelDetails: root.querySelector('[data-panel="details"]'),
     lessonGrid: root.querySelector('[data-lesson-grid]'),
-    instructorGrid: root.querySelector('[data-instructor-grid]'),
+    vehicleField: root.querySelector('[data-vehicle-field]'),
     calMonth: root.querySelector('[data-cal-month]'),
     calGrid: root.querySelector('[data-cal-grid]'),
     calPrev: root.querySelector('[data-cal-prev]'),
@@ -77,6 +70,8 @@
     summaryTotal: root.querySelector('[data-summary-total]'),
     submit: root.querySelector('[data-booking-submit]'),
     error: root.querySelector('[data-booking-error]'),
+    offline: root.querySelector('[data-booking-offline]'),
+    app: root.querySelector('[data-booking-app]'),
     timer: root.querySelector('[data-reservation-timer]'),
     timerValue: root.querySelector('[data-reservation-timer] b')
   };
@@ -86,6 +81,10 @@
   function pad(n) { return n < 10 ? '0' + n : '' + n; }
   function iso(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
   function parseISO(s) { var p = s.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  function uuid() {
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    return 'k' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+  }
 
   function showError(msg) {
     els.error.textContent = msg;
@@ -95,6 +94,11 @@
   function clearError() {
     els.error.classList.remove('is-visible');
     els.error.textContent = '';
+  }
+  function showOffline() {
+    state.backendDown = true;
+    if (els.offline) els.offline.hidden = false;
+    if (els.app) els.app.hidden = true;
   }
 
   function setStep(n) {
@@ -106,7 +110,10 @@
 
   function api(path, options) {
     options = options || {};
-    options.headers = Object.assign({ 'Content-Type': 'application/json' }, options.headers || {});
+    options.headers = Object.assign(
+      { 'Content-Type': 'application/json', Accept: 'application/json' },
+      options.headers || {}
+    );
     return fetch(API + path, options).then(function (res) {
       return res.json().catch(function () { return {}; }).then(function (body) {
         if (!res.ok) {
@@ -119,112 +126,88 @@
     });
   }
 
+  /* ---------- Leistungen vom Backend laden ---------- */
+  function loadServices() {
+    return api('/services').then(function (data) {
+      state.services = {};
+      (data.services || []).forEach(function (s) {
+        state.services[String(s.variantId)] = s;
+      });
+    });
+  }
+
   /* ---------- Schritt 1: Fahrstundenart ---------- */
   function renderLessons() {
     els.lessonGrid.innerHTML = '';
+    var anyBookable = false;
     cfg.products.forEach(function (p) {
+      var service = state.services[String(p.variantId)];
+      if (!service) return; // Produkt ist keiner Kalenderleistung zugeordnet -> nicht anbieten
+      anyBookable = true;
       var btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'option-card';
       btn.setAttribute('data-product-id', p.id);
       btn.innerHTML =
         '<b>' + escapeHtml(p.title) + '</b>' +
-        '<small>' + p.durationMinutes + ' Minuten' + (p.description ? ' · ' + escapeHtml(p.description) : '') + '</small>' +
+        '<small>' + service.durationMinutes + ' Minuten' + (p.description ? ' · ' + escapeHtml(p.description) : '') + '</small>' +
         '<span class="option-card__price">' + escapeHtml(p.priceFormatted) + '</span>';
-      btn.addEventListener('click', function () { selectLesson(p, btn); });
+      btn.addEventListener('click', function () { selectLesson(p, service, btn); });
       els.lessonGrid.appendChild(btn);
     });
+
+    if (!anyBookable) {
+      showOffline();
+      return;
+    }
 
     /* Vorauswahl über ?leistung=handle (Link von der Produktseite) */
     var params = new URLSearchParams(location.search);
     var pre = params.get('leistung');
     if (pre) {
       var match = cfg.products.find(function (p) { return p.handle === pre; });
-      if (match) {
+      if (match && state.services[String(match.variantId)]) {
         var el = els.lessonGrid.querySelector('[data-product-id="' + match.id + '"]');
-        if (el) selectLesson(match, el);
+        if (el) selectLesson(match, state.services[String(match.variantId)], el);
       }
     }
   }
 
-  function selectLesson(p, btn) {
+  function selectLesson(p, service, btn) {
     if (state.product && state.product.id === p.id) return;
     state.product = p;
+    state.service = service;
     resetFrom('lesson');
     markSelected(els.lessonGrid, btn);
-    els.panelInstructor.hidden = !cfg.showInstructor;
-    if (cfg.showInstructor) {
-      loadInstructors();
-      setStep(2);
-    } else {
-      state.instructor = state.instructors[0] || null;
-      els.panelDate.hidden = false;
-      setStep(2);
-      loadAvailability();
+
+    /* Getriebe-Auswahl nur zeigen, wenn die Leistung beides erlaubt */
+    if (els.vehicleField) {
+      var needsChoice = service.vehicleType === 'beide';
+      els.vehicleField.hidden = !needsChoice;
+      els.form.elements.vehicleType.required = needsChoice;
+      if (!needsChoice) els.form.elements.vehicleType.value = service.vehicleType;
+      else els.form.elements.vehicleType.value = '';
     }
+
+    els.panelDate.hidden = false;
+    setStep(2);
+    loadAvailability();
     updateSummary();
   }
 
-  /* ---------- Schritt 2: Fahrlehrer ---------- */
-  function loadInstructors() {
-    if (state.instructors.length) { renderInstructors(); return; }
-    els.instructorGrid.innerHTML = '<p class="booking-loading">Fahrlehrer werden geladen …</p>';
-    api('/api/instructors')
-      .then(function (data) {
-        state.instructors = data.instructors || [];
-        if (state.instructors.length === 1) {
-          state.instructor = state.instructors[0];
-          els.panelInstructor.hidden = true;
-          els.panelDate.hidden = false;
-          setStep(3);
-          loadAvailability();
-          updateSummary();
-        } else {
-          renderInstructors();
-        }
-      })
-      .catch(function () {
-        els.instructorGrid.innerHTML = '<p class="booking-loading">Fahrlehrer konnten nicht geladen werden. Bitte lade die Seite neu.</p>';
-      });
-  }
-
-  function renderInstructors() {
-    els.instructorGrid.innerHTML = '';
-    state.instructors.forEach(function (ins) {
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'option-card';
-      btn.innerHTML = '<b>' + escapeHtml(ins.name) + '</b>' +
-        (ins.vehicle ? '<small>' + escapeHtml(ins.vehicle) + '</small>' : '');
-      btn.addEventListener('click', function () {
-        state.instructor = ins;
-        resetFrom('instructor');
-        markSelected(els.instructorGrid, btn);
-        els.panelDate.hidden = false;
-        setStep(3);
-        loadAvailability();
-        updateSummary();
-      });
-      els.instructorGrid.appendChild(btn);
-    });
-  }
-
-  /* ---------- Schritt 3: Kalender ---------- */
+  /* ---------- Schritt 2: Kalender ---------- */
   function loadAvailability(force) {
-    if (!state.product) return;
+    if (!state.service) return;
     var from = iso(state.monthCursor);
     var last = new Date(state.monthCursor.getFullYear(), state.monthCursor.getMonth() + 1, 0);
     var to = iso(last);
-    var key = from + '|' + (state.instructor ? state.instructor.id : 'any') + '|' + state.product.durationMinutes;
+    var key = from + '|' + state.service.id;
     if (!force && key === state.availabilityKey) { renderCalendar(); return; }
 
     els.calLoading.hidden = false;
     els.calGrid.setAttribute('aria-busy', 'true');
 
-    var q = '?from=' + from + '&to=' + to + '&duration=' + state.product.durationMinutes;
-    if (state.instructor) q += '&instructorId=' + encodeURIComponent(state.instructor.id);
-
-    api('/api/availability' + q)
+    api('/availability?from=' + from + '&to=' + to + '&serviceId=' + state.service.id)
       .then(function (data) {
         state.availability = data.days || {};
         state.availabilityKey = key;
@@ -244,7 +227,6 @@
     var m = state.monthCursor.getMonth();
     els.calMonth.textContent = monthFmt.format(state.monthCursor);
 
-    /* Zurück-Pfeil sperren, wenn aktueller Monat erreicht ist */
     var now = new Date();
     els.calPrev.disabled = (y === now.getFullYear() && m === now.getMonth()) || state.monthCursor < startOfMonth(now);
 
@@ -296,12 +278,12 @@
     releaseReservation();
     renderCalendar();
     renderTimeslots();
-    setStep(cfg.showInstructor ? 4 : 3);
+    setStep(3);
     updateSummary();
     validate();
   }
 
-  /* ---------- Schritt 4: Uhrzeit ---------- */
+  /* ---------- Schritt 3: Uhrzeit ---------- */
   function renderTimeslots() {
     var slots = state.availability[state.date] || [];
     els.timeslotsWrap.hidden = false;
@@ -322,7 +304,7 @@
         releaseReservation();
         renderTimeslots();
         els.panelDetails.hidden = false;
-        setStep(cfg.showInstructor ? 5 : 4);
+        setStep(4);
         updateSummary();
         validate();
         els.panelDetails.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -338,16 +320,21 @@
     return pad(Math.floor(total / 60) % 24) + ':' + pad(total % 60);
   }
 
+  function vehicleLabel(v) {
+    return v === 'automat' ? 'Automat' : v === 'handschaltung' ? 'Handschaltung' : '';
+  }
+
   function updateSummary() {
     if (!state.product) { els.summary.hidden = true; return; }
     els.summary.hidden = false;
     var rows = [
       ['Fahrstundenart', state.product.title],
-      ['Dauer', state.product.durationMinutes + ' Minuten']
+      ['Dauer', state.service.durationMinutes + ' Minuten']
     ];
-    if (state.instructor) rows.push(['Fahrlehrer', state.instructor.name]);
+    var veh = els.form.elements.vehicleType.value;
+    if (veh) rows.push(['Getriebe', vehicleLabel(veh)]);
     if (state.date) rows.push(['Datum', dateFmt.format(parseISO(state.date))]);
-    if (state.time) rows.push(['Uhrzeit', state.time + ' – ' + endTime(state.time, state.product.durationMinutes) + ' Uhr']);
+    if (state.time) rows.push(['Uhrzeit', state.time + ' – ' + endTime(state.time, state.service.durationMinutes) + ' Uhr']);
     var mp = els.form.elements.meetingPoint.value;
     if (mp) rows.push(['Treffpunkt', mp]);
 
@@ -361,22 +348,29 @@
   function formValues() {
     var f = els.form.elements;
     return {
-      name: f.name.value.trim(),
+      firstName: f.firstName.value.trim(),
+      lastName: f.lastName.value.trim(),
       email: f.email.value.trim(),
       phone: f.phone.value.trim(),
       meetingPoint: f.meetingPoint.value,
-      note: f.note.value.trim()
+      vehicleType: f.vehicleType.value,
+      note: f.note.value.trim(),
+      isFirstLesson: f.isFirstLesson.checked,
+      termsAccepted: f.termsAccepted.checked,
+      website: f.website ? f.website.value : '' // Honeypot
     };
   }
 
   function validate() {
     var v = formValues();
     var ok = !!(state.product && state.date && state.time &&
-      (!cfg.showInstructor || state.instructor) &&
-      v.name.length >= 2 &&
+      v.firstName.length >= 2 &&
+      v.lastName.length >= 2 &&
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email) &&
       v.phone.replace(/\D/g, '').length >= 7 &&
-      v.meetingPoint);
+      v.meetingPoint &&
+      v.vehicleType &&
+      v.termsAccepted);
     els.submit.disabled = !ok || state.submitting;
     return ok;
   }
@@ -386,7 +380,9 @@
     stopTimer();
     if (state.reservation) {
       /* Freigabe ist Best-Effort – das Backend räumt abgelaufene Holds ohnehin auf. */
-      fetch(API + '/api/reservations/' + state.reservation.id, { method: 'DELETE' }).catch(function () {});
+      fetch(API + '/holds/' + state.reservation.id + '?bookingToken=' + encodeURIComponent(state.reservation.bookingToken), {
+        method: 'DELETE'
+      }).catch(function () {});
       state.reservation = null;
     }
     els.timer.classList.remove('is-visible');
@@ -417,66 +413,107 @@
     state.timerInterval = null;
   }
 
+  /* Bestehende Buchungs-Positionen aus dem Warenkorb entfernen und deren
+     Reservierung freigeben – ein Kunde kann immer nur einen Termin
+     gleichzeitig buchen (Menge ist damit fest 1). */
+  function clearCartBookings() {
+    return fetch(window.themeSettings.cartCountUrl, { headers: { Accept: 'application/json' } })
+      .then(function (r) { return r.json(); })
+      .then(function (cart) {
+        var updates = {};
+        var hasBooking = false;
+        (cart.items || []).forEach(function (item) {
+          var props = item.properties || {};
+          if (props._booking_token) {
+            hasBooking = true;
+            updates[item.key] = 0;
+            var holdId = props._hold_id;
+            if (holdId) {
+              fetch(API + '/holds/' + holdId + '?bookingToken=' + encodeURIComponent(props._booking_token), {
+                method: 'DELETE'
+              }).catch(function () {});
+            }
+          }
+        });
+        if (!hasBooking) return null;
+        return fetch('/cart/update.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ updates: updates })
+        });
+      })
+      .catch(function () { return null; });
+  }
+
   function submitBooking() {
     if (!validate() || state.submitting) return;
+    var v = formValues();
+    if (v.website) return; // Honeypot: still verwerfen
     clearError();
     state.submitting = true;
     els.submit.disabled = true;
     els.submit.textContent = 'Termin wird reserviert …';
 
-    var v = formValues();
     var payload = {
-      productId: state.product.id,
-      variantId: state.product.variantId,
-      lessonTitle: state.product.title,
-      durationMinutes: state.product.durationMinutes,
-      instructorId: state.instructor ? state.instructor.id : null,
+      variantId: String(state.product.variantId),
       date: state.date,
       time: state.time,
-      customer: { name: v.name, email: v.email, phone: v.phone },
+      customer: { firstName: v.firstName, lastName: v.lastName, email: v.email, phone: v.phone },
       meetingPoint: v.meetingPoint,
-      note: v.note
+      vehicleType: v.vehicleType || undefined,
+      note: v.note || undefined,
+      isFirstLesson: v.isFirstLesson,
+      termsAccepted: true,
+      idempotencyKey: uuid()
     };
 
-    /* 1) Serverseitig atomar reservieren (Backend prüft Verfügbarkeit erneut) */
-    api('/api/reservations', { method: 'POST', body: JSON.stringify(payload) })
+    /* 1) Alte Buchungs-Position entfernen, 2) serverseitig atomar reservieren */
+    clearCartBookings()
+      .then(function () {
+        return api('/holds', { method: 'POST', body: JSON.stringify(payload) });
+      })
       .then(function (res) {
-        state.reservation = { id: res.reservationId, expiresAt: res.expiresAt };
+        state.reservation = { id: res.reservationId, bookingToken: res.bookingToken, expiresAt: res.expiresAt };
         startTimer(res.expiresAt);
         els.submit.textContent = 'Weiter zur Kasse …';
 
-        /* 2) Produkt mit Termindaten in den Shopify-Warenkorb legen */
+        /* 3) Produkt mit Termindaten in den Shopify-Warenkorb legen */
         var properties = {
-          'Datum': dateFmt.format(parseISO(state.date)),
-          'Uhrzeit': state.time + ' – ' + endTime(state.time, state.product.durationMinutes) + ' Uhr',
-          'Dauer': state.product.durationMinutes + ' Minuten',
+          'Termin': dateFmt.format(parseISO(state.date)),
+          'Uhrzeit': state.time + ' – ' + endTime(state.time, state.service.durationMinutes) + ' Uhr',
+          'Fahrstundenart': state.product.title,
+          'Dauer': state.service.durationMinutes + ' Minuten',
           'Treffpunkt': v.meetingPoint,
-          'Reservierungs-ID': res.reservationId
+          'Getriebe': vehicleLabel(v.vehicleType),
+          '_booking_token': res.bookingToken,
+          '_hold_id': String(res.reservationId)
         };
-        if (state.instructor) properties['Fahrlehrer'] = state.instructor.name;
         if (v.note) properties['Bemerkung'] = v.note;
+        if (v.isFirstLesson) properties['Erste Fahrstunde'] = 'Ja';
 
         return fetch(window.themeSettings.cartAddUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({ items: [{ id: state.product.variantId, quantity: 1, properties: properties }] })
+          body: JSON.stringify({ items: [{ id: Number(state.product.variantId), quantity: 1, properties: properties }] })
         });
       })
       .then(function (cartRes) {
         if (!cartRes.ok) throw new Error('CART');
         document.dispatchEvent(new Event('cart:updated'));
-        /* 3) Direkt zum Shopify-Checkout */
+        /* 4) Direkt zum Shopify-Checkout */
         window.location.href = '/checkout';
       })
       .catch(function (err) {
         state.submitting = false;
         els.submit.textContent = 'Verbindlich buchen';
         if (err && (err.code === 'SLOT_TAKEN' || err.code === 409)) {
-          showError('Dieser Termin wurde soeben von jemand anderem gebucht. Bitte wähle eine andere Uhrzeit.');
+          showError('Dieser Termin wurde gerade vergeben. Bitte wähle einen anderen Termin.');
           state.time = null;
           state.availabilityKey = '';
           loadAvailability(true);
           els.timeslotsWrap.hidden = true;
+        } else if (err && err.code === 'INVALID') {
+          showError(err.message || 'Bitte überprüfe deine Angaben.');
         } else if (err && err.message === 'CART') {
           releaseReservation();
           showError('Der Warenkorb konnte nicht aktualisiert werden. Bitte versuche es erneut.');
@@ -489,10 +526,6 @@
 
   /* ---------- Sonstiges ---------- */
   function resetFrom(step) {
-    if (step === 'lesson') {
-      state.instructor = cfg.showInstructor ? null : state.instructor;
-      clearSelected(els.instructorGrid);
-    }
     state.date = null;
     state.time = null;
     state.availabilityKey = '';
@@ -528,13 +561,18 @@
     loadAvailability();
   });
   els.form.addEventListener('input', function () { validate(); updateSummary(); });
+  els.form.addEventListener('change', function () { validate(); updateSummary(); });
   els.form.addEventListener('submit', function (e) { e.preventDefault(); submitBooking(); });
-  window.addEventListener('pagehide', function () {
-    /* Verlässt der Kunde die Seite vor dem Checkout nicht – Hold läuft serverseitig ab. */
-  });
 
   /* ---------- Start ---------- */
-  renderLessons();
   setStep(1);
-  validate();
+  loadServices()
+    .then(function () {
+      renderLessons();
+      validate();
+    })
+    .catch(function () {
+      /* Backend nicht erreichbar oder App Proxy nicht eingerichtet */
+      showOffline();
+    });
 })();

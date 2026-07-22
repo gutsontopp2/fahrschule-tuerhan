@@ -1,0 +1,31 @@
+{
+  "sections": {
+    "steps": {
+      "type": "steps",
+      "blocks": {
+        "w1": { "type": "step", "settings": { "title": "Nothilfekurs besuchen", "text": "Der Nothilfekurs ist obligatorisch für alle, die einen Lernfahrausweis beantragen. In Liechtenstein bieten ihn zum Beispiel die Samariter an.", "link_label": "Samariter Liechtenstein", "link": "https://samariter.li/" } },
+        "w2": { "type": "step", "settings": { "title": "Lernfahrausweis beantragen", "text": "Gesuch mit Sehtest und Nothilfeausweis einreichen. Wohnsitz in Liechtenstein: Amt für Strassenverkehr (llv.li). Wohnsitz im Kanton St. Gallen: Strassenverkehrsamt (sg.ch).", "link_label": "Amt für Strassenverkehr Liechtenstein", "link": "https://www.llv.li/de/landesverwaltung/amt-fuer-strassenverkehr" } },
+        "w2b": { "type": "step", "settings": { "title": "Für Fahrschüler aus der Schweiz", "text": "Wohnst du im Kanton St. Gallen (z. B. Region Werdenberg, Buchs SG), läuft dein Gesuch über das Strassenverkehrsamt des Kantons St. Gallen.", "link_label": "Strassenverkehrsamt St. Gallen", "link": "https://www.sg.ch/verkehr/strassenverkehr.html" } },
+        "w3": { "type": "step", "settings": { "title": "Theorie lernen und Theorieprüfung ablegen", "text": "Mit Lern-App oder Kurs auf die Theorieprüfung vorbereiten und die Prüfung bei der zuständigen Stelle ablegen. Kurse gibt es zum Beispiel im Fahrschulcenter in Schaan.", "link_label": "Fahrschulcenter Liechtenstein", "link": "https://www.fahrschulcenter.li/" } },
+        "w4": { "type": "step", "settings": { "title": "Verkehrskundeunterricht (VKU)", "text": "Der VKU ist obligatorisch und umfasst mehrere Abende. Die Anmeldung übernehme ich gerne für dich – melde dich einfach." } },
+        "w5": { "type": "step", "settings": { "title": "Fahrstunden", "text": "Praktische Ausbildung im weissen Seat Leon FR – handgeschaltet oder Automat, mit 50 Minuten pro Lektion. Private Lernfahrten sind zusätzlich mit einer Begleitperson gemäss den gesetzlichen Vorgaben möglich." } },
+        "w6": { "type": "step", "settings": { "title": "Anmeldung zur praktischen Prüfung", "text": "Sobald du bereit bist, melden wir dich gemeinsam zur praktischen Prüfung an – in Liechtenstein oder im Kanton St. Gallen, je nach Wohnsitz." } },
+        "w7": { "type": "step", "settings": { "title": "Praktische Prüfung bestehen", "text": "Nach bestandener Prüfung erhältst du deinen Führerausweis. Geschafft – gute Fahrt!" } }
+      },
+      "block_order": ["w1", "w2", "w2b", "w3", "w4", "w5", "w6", "w7"],
+      "settings": {}
+    },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "f1": { "type": "faq", "settings": { "question": "Gilt für mich Liechtenstein oder die Schweiz?", "answer": "Massgebend ist dein Wohnsitz: Wohnst du in Liechtenstein, ist das Amt für Strassenverkehr in Vaduz zuständig. Wohnst du im Kanton St. Gallen, ist es das Strassenverkehrsamt des Kantons St. Gallen. Fahrstunden kannst du in beiden Fällen bei mir nehmen." } },
+        "f2": { "type": "faq", "settings": { "question": "Wie viele Fahrstunden brauche ich?", "answer": "Das ist individuell und hängt von deinem Lernfortschritt und deiner privaten Fahrpraxis ab. Nach den ersten Lektionen kann ich dir eine realistische Einschätzung geben." } },
+        "f3": { "type": "faq", "settings": { "question": "Wer darf mich privat begleiten?", "answer": "Private Lernfahrten sind mit einer Begleitperson möglich, die die gesetzlichen Voraussetzungen erfüllt (Mindestalter und mehrjähriger Besitz des Führerausweises der entsprechenden Kategorie). Die verbindlichen Anforderungen findest du bei der zuständigen Behörde." } }
+      },
+      "block_order": ["f1", "f2", "f3"],
+      "settings": { "eyebrow": "Gut zu wissen", "heading": "Fragen zum Ablauf" }
+    },
+    "cta": { "type": "cta-banner", "settings": {} }
+  },
+  "order": ["steps", "faq", "cta"]
+}

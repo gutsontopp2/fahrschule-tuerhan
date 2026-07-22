@@ -1,0 +1,77 @@
+{%- comment -%}
+  «Der Weg zum Führerschein» – Schritt-für-Schritt-Ablauf mit optionalen
+  Links zu offiziellen Stellen. Bei behördlichen Angaben gilt: nichts
+  erfinden – der Abschnitt zeigt ein Feld «Zuletzt geprüft am» und einen
+  Hinweis auf die zuständigen Behörden.
+{%- endcomment -%}
+<section class="section" id="ablauf">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+      <h2>{{ section.settings.heading }}</h2>
+      <p>{{ section.settings.text }}</p>
+      <hr class="roadline">
+    </div>
+
+    <ol class="steps-list">
+      {%- for block in section.blocks -%}
+        <li class="steps-list__item" {{ block.shopify_attributes }}>
+          <span class="steps-list__num" aria-hidden="true">{{ forloop.index }}</span>
+          <div>
+            <h3>{{ block.settings.title }}</h3>
+            <p>{{ block.settings.text }}</p>
+            {%- if block.settings.link_label != blank and block.settings.link != blank -%}
+              <a class="steps-list__link" href="{{ block.settings.link }}" target="_blank" rel="noopener">{{ block.settings.link_label }} ↗</a>
+            {%- endif -%}
+          </div>
+        </li>
+      {%- endfor -%}
+    </ol>
+
+    {%- if section.settings.checked_date != blank -%}
+      <p class="steps-checked">
+        Zuletzt geprüft am: {{ section.settings.checked_date }}.
+        {{ section.settings.disclaimer }}
+      </p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Weg zum Führerschein",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Kleine Zeile", "default": "Schritt für Schritt" },
+    { "type": "text", "id": "heading", "label": "Titel", "default": "Der Weg zum Führerschein" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Vom Nothilfekurs bis zur praktischen Prüfung: So läuft es ab – ich begleite dich bei jedem Schritt. Je nach Wohnsitz gelten die Regelungen von Liechtenstein (FL) oder der Schweiz (CH)." },
+    { "type": "text", "id": "checked_date", "label": "Zuletzt geprüft am (z. B. 22.07.2026)", "default": "22.07.2026", "info": "Datum aktualisieren, wenn die Angaben und Links überprüft wurden." },
+    { "type": "textarea", "id": "disclaimer", "label": "Behörden-Hinweis", "default": "Verbindliche und aktuelle Informationen erhältst du bei der zuständigen Behörde: für Liechtenstein beim Amt für Strassenverkehr (llv.li), für den Kanton St. Gallen beim Strassenverkehrsamt (sg.ch)." }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Schritt",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Titel", "default": "Nothilfekurs" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Der Nothilfekurs ist obligatorisch für alle, die einen Lernfahrausweis beantragen." },
+        { "type": "text", "id": "link_label", "label": "Link-Beschriftung" },
+        { "type": "url", "id": "link", "label": "Link (offizielle Stelle)" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Weg zum Führerschein",
+      "blocks": [
+        { "type": "step", "settings": { "title": "Nothilfekurs besuchen", "text": "Der Nothilfekurs ist obligatorisch für alle, die einen Lernfahrausweis beantragen. In Liechtenstein bieten ihn zum Beispiel die Samariter an.", "link_label": "Samariter Liechtenstein", "link": "https://samariter.li/" } },
+        { "type": "step", "settings": { "title": "Lernfahrausweis beantragen", "text": "Gesuch mit Sehtest und Nothilfeausweis einreichen. Wohnsitz in Liechtenstein: Amt für Strassenverkehr (llv.li). Wohnsitz im Kanton St. Gallen: Strassenverkehrsamt (sg.ch).", "link_label": "Amt für Strassenverkehr Liechtenstein", "link": "https://www.llv.li/de/landesverwaltung/amt-fuer-strassenverkehr" } },
+        { "type": "step", "settings": { "title": "Theorie lernen und Theorieprüfung ablegen", "text": "Mit Lern-App oder Kurs auf die Theorieprüfung vorbereiten und die Prüfung bei der zuständigen Stelle ablegen. Kurse gibt es zum Beispiel im Fahrschulcenter in Schaan.", "link_label": "Fahrschulcenter Liechtenstein", "link": "https://www.fahrschulcenter.li/" } },
+        { "type": "step", "settings": { "title": "Verkehrskundeunterricht (VKU)", "text": "Der VKU ist obligatorisch und umfasst mehrere Abende. Die Anmeldung übernehme ich gerne für dich – melde dich einfach." } },
+        { "type": "step", "settings": { "title": "Fahrstunden", "text": "Praktische Ausbildung im weissen Seat Leon FR – handgeschaltet oder Automat, mit 50 Minuten pro Lektion. Private Lernfahrten sind zusätzlich mit einer Begleitperson gemäss den gesetzlichen Vorgaben möglich." } },
+        { "type": "step", "settings": { "title": "Anmeldung zur praktischen Prüfung", "text": "Sobald du bereit bist, melden wir dich gemeinsam zur praktischen Prüfung an – in Liechtenstein oder im Kanton St. Gallen, je nach Wohnsitz." } },
+        { "type": "step", "settings": { "title": "Praktische Prüfung bestehen", "text": "Nach bestandener Prüfung erhältst du deinen Führerausweis. Geschafft – gute Fahrt!" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

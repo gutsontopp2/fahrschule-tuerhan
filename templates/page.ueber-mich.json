@@ -1,0 +1,35 @@
+{
+  "sections": {
+    "about": {
+      "type": "about",
+      "blocks": {
+        "s1": { "type": "stat", "settings": { "value": "61+", "label": "Fahrschüler ausgebildet" } },
+        "s2": { "type": "stat", "settings": { "value": "99 %", "label": "höchst zufrieden (6/6 Sterne)" } }
+      },
+      "block_order": ["s1", "s2"],
+      "settings": {
+        "eyebrow": "Über mich",
+        "heading": "Dilek Türhan – deine Fahrlehrerin",
+        "text": "<p>Das Lehren macht mir am meisten Spass an meinem Beruf. Ich sehe gerne die Entwicklung meiner Fahrschüler: ganz nervös am Anfang mit Tempo 20 – und gegen Schluss mit Musik, offenem Fenster und viel Selbstvertrauen unterwegs.</p><p>Bei mir lernst du in einer entspannten Atmosphäre, in der du dich wohlfühlst. Ich gehe auf deine Bedürfnisse ein und unterstütze dich zusätzlich digital – mit Hilfsvideos, Bildern und Handouts per WhatsApp, SMS oder E-Mail, auch zwischen den Fahrstunden. Meine Freizeit verbringe ich am liebsten mit meiner Familie.</p>"
+      }
+    },
+    "instructors": {
+      "type": "instructors",
+      "blocks": {
+        "i1": { "type": "instructor", "settings": {} }
+      },
+      "block_order": ["i1"],
+      "settings": {}
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "blocks": {
+        "t1": { "type": "testimonial", "settings": { "stars": 6, "quote": "Sehr kompetent, immer gut gelaunt! Habe die Fahrprüfung direkt im ersten Anlauf bestanden.", "name": "Fabio", "detail": "Kategorie B, bestanden im 1. Anlauf" } }
+      },
+      "block_order": ["t1"],
+      "settings": {}
+    },
+    "cta": { "type": "cta-banner", "settings": {} }
+  },
+  "order": ["about", "instructors", "testimonials", "cta"]
+}

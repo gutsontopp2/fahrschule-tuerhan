@@ -29,4 +29,21 @@
   }
   updateCartCount();
   document.addEventListener('cart:updated', updateCartCount);
+
+  /* Warenkorb: Beim Entfernen eines Termins die serverseitige Reservierung
+     freigeben (Best-Effort – abgelaufene Holds räumt das Backend ohnehin auf). */
+  document.querySelectorAll('[data-cart-remove]').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      var holdId = link.getAttribute('data-hold-id');
+      var token = link.getAttribute('data-booking-token');
+      if (!holdId || !token) return; // normale Position – Standardverhalten
+      e.preventDefault();
+      link.setAttribute('aria-disabled', 'true');
+      fetch('/apps/booking/holds/' + encodeURIComponent(holdId) + '?bookingToken=' + encodeURIComponent(token), {
+        method: 'DELETE'
+      })
+        .catch(function () { /* Freigabe scheitert -> Hold läuft serverseitig ab */ })
+        .finally(function () { window.location.href = link.getAttribute('href'); });
+    });
+  });
 })();

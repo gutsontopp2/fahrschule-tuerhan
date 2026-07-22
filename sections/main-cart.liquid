@@ -30,7 +30,11 @@
                   {%- endfor -%}
                 </dl>
               {%- endif -%}
-              <a class="cart-line__remove" href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0">Termin entfernen</a>
+              <a class="cart-line__remove"
+                 href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0"
+                 data-cart-remove
+                 data-hold-id="{{ item.properties['_hold_id'] | escape }}"
+                 data-booking-token="{{ item.properties['_booking_token'] | escape }}">Termin entfernen</a>
             </div>
           {%- endfor -%}
         </div>

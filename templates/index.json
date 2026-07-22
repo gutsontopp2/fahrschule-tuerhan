@@ -10,14 +10,26 @@
       "block_order": ["stat1", "stat2", "stat3"],
       "settings": {}
     },
+    "trust": {
+      "type": "trust-bar",
+      "blocks": {
+        "t1": { "type": "item", "settings": { "icon": "clock", "text": "50 Minuten pro Fahrstunde" } },
+        "t2": { "type": "item", "settings": { "icon": "car", "text": "Handschaltung & Automat" } },
+        "t3": { "type": "item", "settings": { "icon": "pin", "text": "Liechtenstein & Region Werdenberg" } },
+        "t4": { "type": "item", "settings": { "icon": "calendar", "text": "Einfache Online-Buchung" } }
+      },
+      "block_order": ["t1", "t2", "t3", "t4"],
+      "settings": {}
+    },
     "advantages": {
       "type": "advantages",
       "blocks": {
         "a1": { "type": "advantage", "settings": { "icon": "smile", "title": "Entspannte Atmosphäre", "text": "Ohne Stress lernen: mit Geduld, Humor und einem lockeren Umfeld zur Prüfungsreife." } },
         "a2": { "type": "advantage", "settings": { "icon": "calendar", "title": "Flexible Termine – online buchbar", "text": "Freie Fahrstunden direkt im Kalender sehen und in zwei Minuten fix buchen." } },
-        "a3": { "type": "advantage", "settings": { "icon": "chat", "title": "Digitale Lernbegleitung", "text": "Hilfsvideos, Bilder und Handouts per WhatsApp, SMS oder E-Mail – auch zwischen den Fahrstunden." } }
+        "a3": { "type": "advantage", "settings": { "icon": "check", "title": "Individuelle Betreuung", "text": "Jede Lektion wird auf deinen Lernstand abgestimmt – vom ersten Anfahren bis zur Prüfungsfahrt." } },
+        "a4": { "type": "advantage", "settings": { "icon": "chat", "title": "Digitale Lernbegleitung", "text": "Hilfsvideos, Bilder und Handouts per WhatsApp, SMS oder E-Mail – auch zwischen den Fahrstunden." } }
       },
-      "block_order": ["a1", "a2", "a3"],
+      "block_order": ["a1", "a2", "a3", "a4"],
       "settings": {}
     },
     "packages": {
@@ -32,26 +44,33 @@
       },
       "block_order": ["s1", "s2"],
       "settings": {
+        "eyebrow": "Über mich",
+        "heading": "Dilek Türhan – deine Fahrlehrerin",
+        "text": "<p>Das Lehren macht mir am meisten Spass an meinem Beruf. Ich sehe gerne die Entwicklung meiner Fahrschüler: ganz nervös am Anfang mit Tempo 20 – und gegen Schluss mit Musik, offenem Fenster und viel Selbstvertrauen unterwegs. Gefahren wird im weissen Seat Leon FR, handgeschaltet oder Automat.</p>",
         "link_label": "Mehr über mich",
         "link": "/pages/ueber-mich"
       }
     },
-    "instructors": {
-      "type": "instructors",
+    "steps": {
+      "type": "steps",
       "blocks": {
-        "i1": { "type": "instructor", "settings": {} }
+        "w1": { "type": "step", "settings": { "title": "Nothilfekurs besuchen", "text": "Der Nothilfekurs ist obligatorisch für alle, die einen Lernfahrausweis beantragen. In Liechtenstein bieten ihn zum Beispiel die Samariter an.", "link_label": "Samariter Liechtenstein", "link": "https://samariter.li/" } },
+        "w2": { "type": "step", "settings": { "title": "Lernfahrausweis beantragen", "text": "Gesuch mit Sehtest und Nothilfeausweis einreichen. Wohnsitz in Liechtenstein: Amt für Strassenverkehr (llv.li). Wohnsitz im Kanton St. Gallen: Strassenverkehrsamt (sg.ch).", "link_label": "Amt für Strassenverkehr Liechtenstein", "link": "https://www.llv.li/de/landesverwaltung/amt-fuer-strassenverkehr" } },
+        "w3": { "type": "step", "settings": { "title": "Theorie lernen und Theorieprüfung ablegen", "text": "Mit Lern-App oder Kurs auf die Theorieprüfung vorbereiten und die Prüfung bei der zuständigen Stelle ablegen. Kurse gibt es zum Beispiel im Fahrschulcenter in Schaan.", "link_label": "Fahrschulcenter Liechtenstein", "link": "https://www.fahrschulcenter.li/" } },
+        "w4": { "type": "step", "settings": { "title": "Verkehrskundeunterricht (VKU)", "text": "Der VKU ist obligatorisch und umfasst mehrere Abende. Die Anmeldung übernehme ich gerne für dich – melde dich einfach." } },
+        "w5": { "type": "step", "settings": { "title": "Fahrstunden", "text": "Praktische Ausbildung im weissen Seat Leon FR – handgeschaltet oder Automat, mit 50 Minuten pro Lektion. Private Lernfahrten sind zusätzlich mit einer Begleitperson gemäss den gesetzlichen Vorgaben möglich." } },
+        "w6": { "type": "step", "settings": { "title": "Anmeldung zur praktischen Prüfung", "text": "Sobald du bereit bist, melden wir dich gemeinsam zur praktischen Prüfung an – in Liechtenstein oder im Kanton St. Gallen, je nach Wohnsitz." } },
+        "w7": { "type": "step", "settings": { "title": "Praktische Prüfung bestehen", "text": "Nach bestandener Prüfung erhältst du deinen Führerausweis. Geschafft – gute Fahrt!" } }
       },
-      "block_order": ["i1"],
+      "block_order": ["w1", "w2", "w3", "w4", "w5", "w6", "w7"],
       "settings": {}
     },
     "testimonials": {
       "type": "testimonials",
       "blocks": {
-        "t1": { "type": "testimonial", "settings": {} },
-        "t2": { "type": "testimonial", "settings": { "quote": "Die entspannte Atmosphäre hat mir extrem geholfen. Jede Stunde war gut vorbereitet und fair abgerechnet.", "name": "Lea", "detail": "Kategorie B" } },
-        "t3": { "type": "testimonial", "settings": { "quote": "Flexible Termine, klare Erklärungen und super Unterstützung mit Videos zwischen den Fahrstunden.", "name": "Jonas", "detail": "Kategorie B, Automat" } }
+        "t1": { "type": "testimonial", "settings": { "stars": 6, "quote": "Sehr kompetent, immer gut gelaunt! Habe die Fahrprüfung direkt im ersten Anlauf bestanden.", "name": "Fabio", "detail": "Kategorie B, bestanden im 1. Anlauf" } }
       },
-      "block_order": ["t1", "t2", "t3"],
+      "block_order": ["t1"],
       "settings": {}
     },
     "faq": {
@@ -59,8 +78,8 @@
       "blocks": {
         "f1": { "type": "faq", "settings": {} },
         "f2": { "type": "faq", "settings": { "question": "Wo werde ich abgeholt?", "answer": "Beim Buchen wählst du einen Treffpunkt aus – zum Beispiel Bahnhof Buchs SG oder nach Vereinbarung. Andere Treffpunkte sind auf Anfrage möglich." } },
-        "f3": { "type": "faq", "settings": { "question": "Fahre ich handgeschaltet oder Automat?", "answer": "Beides ist möglich. Gib beim Buchen einfach die gewünschte Fahrstundenart an – gefahren wird im weissen Seat Leon FR." } },
-        "f4": { "type": "faq", "settings": { "question": "Kann ich einen Termin verschieben oder stornieren?", "answer": "Ja, melde dich bitte spätestens 24 Stunden vorher telefonisch oder per WhatsApp. Kurzfristigere Absagen müssen verrechnet werden." } },
+        "f3": { "type": "faq", "settings": { "question": "Fahre ich handgeschaltet oder Automat?", "answer": "Beides ist möglich. Gib beim Buchen einfach die gewünschte Getriebeart an – gefahren wird im weissen Seat Leon FR." } },
+        "f4": { "type": "faq", "settings": { "question": "Kann ich einen Termin verschieben oder stornieren?", "answer": "Ja, online über den Link in deiner Buchungsbestätigung oder telefonisch – bitte spätestens 24 Stunden vorher. Kurzfristigere Absagen müssen verrechnet werden." } },
         "f5": { "type": "faq", "settings": { "question": "Was brauche ich für die erste Fahrstunde?", "answer": "Deinen gültigen Lernfahrausweis und bequeme Schuhe. Alles andere besprechen wir in der ersten Lektion." } }
       },
       "block_order": ["f1", "f2", "f3", "f4", "f5"],
@@ -69,7 +88,11 @@
     "contact": {
       "type": "contact",
       "settings": {}
+    },
+    "cta": {
+      "type": "cta-banner",
+      "settings": {}
     }
   },
-  "order": ["hero", "advantages", "packages", "about", "instructors", "testimonials", "faq", "contact"]
+  "order": ["hero", "trust", "advantages", "packages", "about", "steps", "testimonials", "faq", "contact", "cta"]
 }

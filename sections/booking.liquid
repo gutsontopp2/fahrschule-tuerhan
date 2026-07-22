@@ -13,12 +13,17 @@
       <hr class="roadline">
     </div>
 
-    {%- comment -%} Wird per JS eingeblendet, wenn keine Backend-URL hinterlegt ist {%- endcomment -%}
+    {%- comment -%} Wird per JS eingeblendet, wenn das Backend nicht erreichbar ist {%- endcomment -%}
     <div class="booking__offline" data-booking-offline hidden>
-      <b>Online-Buchung noch nicht aktiv.</b><br>
-      Ruf mich in der Zwischenzeit gerne an:
-      {%- if settings.contact_phone != blank %} <a href="tel:{{ settings.contact_phone | remove: ' ' }}">{{ settings.contact_phone }}</a>{% endif -%}
-      <br><small>Hinweis für den Betreiber: Backend-URL unter Theme-Einstellungen → Buchungssystem eintragen.</small>
+      <b>Die Online-Buchung ist im Moment nicht verfügbar.</b><br>
+      Ruf mich gerne direkt an
+      {%- if settings.contact_phone != blank %} unter <a href="tel:{{ settings.contact_phone | remove: ' ' }}">{{ settings.contact_phone }}</a>{% endif %}
+      {%- if settings.contact_whatsapp != blank %} oder <a href="https://wa.me/{{ settings.contact_whatsapp }}" target="_blank" rel="noopener">schreib per WhatsApp</a>{% endif %} –
+      wir finden zusammen einen Termin.
+      {%- if request.design_mode -%}
+        <br><small>Nur im Theme-Editor sichtbar: Prüfe, ob die Buchungs-App installiert, der App Proxy
+        (/apps/booking) eingerichtet und die Leistungen im App-Admin angelegt sind.</small>
+      {%- endif -%}
     </div>
     <noscript>
       <div class="booking__offline">
@@ -29,15 +34,20 @@
 
     {%- if col == blank or col.products.size == 0 -%}
       <div class="booking__offline">
-        <b>Keine Fahrstunden hinterlegt.</b><br>
-        <small>Hinweis für den Betreiber: Kollektion mit Fahrstunden-Produkten in den Abschnitts-Einstellungen wählen.</small>
+        <b>Die Online-Buchung ist im Moment nicht verfügbar.</b><br>
+        Ruf mich gerne direkt an
+        {%- if settings.contact_phone != blank %} unter <a href="tel:{{ settings.contact_phone | remove: ' ' }}">{{ settings.contact_phone }}</a>{% endif %} –
+        wir finden zusammen einen Termin.
+        {%- if request.design_mode -%}
+          <br><small>Nur im Theme-Editor sichtbar: Wähle in den Abschnitts-Einstellungen die Kollektion
+          mit den Fahrstunden-Produkten aus.</small>
+        {%- endif -%}
       </div>
     {%- else -%}
 
     <div data-booking-app>
       <ol class="booking-steps" data-step-indicator>
         <li class="is-active"><span>Fahrstunde</span></li>
-        {%- if settings.booking_show_instructor -%}<li><span>Fahrlehrer</span></li>{%- endif -%}
         <li><span>Datum</span></li>
         <li><span>Uhrzeit</span></li>
         <li><span>Deine Daten</span></li>
@@ -47,16 +57,13 @@
 
       <div class="booking-panel" data-panel="lesson">
         <h3><span class="l-tile l-tile--sm" aria-hidden="true">1</span> Fahrstundenart wählen</h3>
-        <div class="option-grid" data-lesson-grid></div>
-      </div>
-
-      <div class="booking-panel" data-panel="instructor" hidden>
-        <h3><span class="l-tile l-tile--sm" aria-hidden="true">2</span> Fahrlehrer wählen</h3>
-        <div class="option-grid" data-instructor-grid></div>
+        <div class="option-grid" data-lesson-grid>
+          <p class="booking-loading">Angebot wird geladen …</p>
+        </div>
       </div>
 
       <div class="booking-panel" data-panel="date" hidden>
-        <h3><span class="l-tile l-tile--sm" aria-hidden="true">{% if settings.booking_show_instructor %}3{% else %}2{% endif %}</span> Termin wählen</h3>
+        <h3><span class="l-tile l-tile--sm" aria-hidden="true">2</span> Termin wählen</h3>
         <div class="calendar">
           <div class="calendar__head">
             <button type="button" class="calendar__nav" data-cal-prev aria-label="Vorheriger Monat">‹</button>
@@ -79,11 +86,15 @@
       </div>
 
       <form class="booking-panel" data-panel="details" data-booking-form hidden novalidate>
-        <h3><span class="l-tile l-tile--sm" aria-hidden="true">{% if settings.booking_show_instructor %}5{% else %}4{% endif %}</span> Deine Daten</h3>
+        <h3><span class="l-tile l-tile--sm" aria-hidden="true">3</span> Deine Daten</h3>
         <div class="form-grid">
           <div class="form-field">
-            <label for="buchung-name">Vor- und Nachname</label>
-            <input type="text" id="buchung-name" name="name" autocomplete="name" required>
+            <label for="buchung-vorname">Vorname</label>
+            <input type="text" id="buchung-vorname" name="firstName" autocomplete="given-name" required>
+          </div>
+          <div class="form-field">
+            <label for="buchung-nachname">Nachname</label>
+            <input type="text" id="buchung-nachname" name="lastName" autocomplete="family-name" required>
           </div>
           <div class="form-field">
             <label for="buchung-email">E-Mail (für die Bestätigung)</label>
@@ -92,6 +103,14 @@
           <div class="form-field">
             <label for="buchung-phone">Handynummer</label>
             <input type="tel" id="buchung-phone" name="phone" autocomplete="tel" placeholder="+41 …" required>
+          </div>
+          <div class="form-field" data-vehicle-field hidden>
+            <label for="buchung-getriebe">Handschaltung oder Automat?</label>
+            <select id="buchung-getriebe" name="vehicleType">
+              <option value="" selected disabled>Bitte wählen …</option>
+              <option value="handschaltung">Handschaltung</option>
+              <option value="automat">Automat</option>
+            </select>
           </div>
           <div class="form-field">
             <label for="buchung-treffpunkt">Treffpunkt</label>
@@ -105,7 +124,36 @@
           </div>
           <div class="form-field">
             <label for="buchung-note">Bemerkung (optional)</label>
-            <textarea id="buchung-note" name="note" rows="3" placeholder="z. B. erste Fahrstunde, Wunschthemen, Abholort-Details"></textarea>
+            <textarea id="buchung-note" name="note" rows="3" placeholder="z. B. Wunschthemen oder Details zum Abholort"></textarea>
+          </div>
+          <div class="form-field form-field--checkbox">
+            <label>
+              <input type="checkbox" name="isFirstLesson" value="1">
+              Das ist meine erste Fahrstunde
+            </label>
+          </div>
+          <div class="form-field form-field--checkbox">
+            <label>
+              <input type="checkbox" name="termsAccepted" value="1" required>
+              Ich akzeptiere die
+              {%- if section.settings.terms_page != blank %}
+                <a href="{{ pages[section.settings.terms_page].url }}" target="_blank" rel="noopener">Buchungs- und Stornierungsbedingungen</a>
+              {%- else %}
+                Buchungs- und Stornierungsbedingungen
+              {%- endif %}
+              und habe die
+              {%- if section.settings.privacy_page != blank %}
+                <a href="{{ pages[section.settings.privacy_page].url }}" target="_blank" rel="noopener">Datenschutzerklärung</a>
+              {%- else %}
+                Datenschutzerklärung
+              {%- endif %}
+              gelesen.
+            </label>
+          </div>
+          {%- comment -%} Honeypot gegen Spam-Bots – für Menschen unsichtbar {%- endcomment -%}
+          <div class="visually-hidden" aria-hidden="true">
+            <label for="buchung-website">Bitte leer lassen</label>
+            <input type="text" id="buchung-website" name="website" tabindex="-1" autocomplete="off">
           </div>
         </div>
 
@@ -117,7 +165,7 @@
 
         <div class="reservation-timer" data-reservation-timer>
           {% render 'icon', name: 'clock' %}
-          <span>Termin für dich reserviert – bitte Zahlung abschliessen: <b>15:00</b></span>
+          <span>Termin für dich reserviert – bitte Zahlung abschliessen: <b>20:00</b></span>
         </div>
 
         <button type="submit" class="btn btn--primary btn--block" data-booking-submit disabled>Verbindlich buchen</button>
@@ -126,9 +174,7 @@
 
       <script type="application/json" data-booking-config>
         {
-          "backendUrl": {{ settings.booking_backend_url | default: '' | json }},
-          "showInstructor": {{ settings.booking_show_instructor | json }},
-          "defaultDuration": {{ settings.booking_default_duration | default: 50 }},
+          "proxyPath": {{ section.settings.proxy_path | default: '/apps/booking' | json }},
           "products": [
             {%- for product in col.products -%}
             {
@@ -137,7 +183,6 @@
               "variantId": {{ product.selected_or_first_available_variant.id }},
               "title": {{ product.title | json }},
               "description": {{ product.description | strip_html | truncate: 70 | json }},
-              "durationMinutes": {{ product.metafields.custom.dauer_minuten.value | default: settings.booking_default_duration }},
               "priceFormatted": {{ product.price | money_with_currency | json }}
             }{%- unless forloop.last -%},{%- endunless -%}
             {%- endfor -%}
@@ -159,7 +204,10 @@
     { "type": "text", "id": "heading", "label": "Titel", "default": "Fahrstunde buchen" },
     { "type": "textarea", "id": "text", "label": "Text", "default": "Wähle deine Fahrstunde, einen freien Termin und bezahle sicher online. Dein Termin ist danach fix – ohne Hin und Her." },
     { "type": "collection", "id": "collection", "label": "Kollektion mit Fahrstunden-Produkten" },
-    { "type": "text", "id": "hold_minutes_display", "label": "Angezeigte Reservierungsdauer (muss zur Backend-Einstellung passen)", "default": "15" }
+    { "type": "text", "id": "proxy_path", "label": "App-Proxy-Pfad", "default": "/apps/booking", "info": "Muss zum App Proxy der Buchungs-App passen." },
+    { "type": "text", "id": "hold_minutes_display", "label": "Angezeigte Reservierungsdauer in Minuten (muss zur App-Einstellung passen)", "default": "20" },
+    { "type": "page", "id": "terms_page", "label": "Seite mit Buchungs- und Stornierungsbedingungen" },
+    { "type": "page", "id": "privacy_page", "label": "Seite mit Datenschutzerklärung" }
   ],
   "presets": [ { "name": "Buchung" } ]
 }

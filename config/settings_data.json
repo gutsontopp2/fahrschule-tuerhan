@@ -13,7 +13,6 @@
     "contact_address": "Fahrschule Türhan Anstalt\nRotengasse 71\n9491 Ruggell, Liechtenstein",
     "opening_hours": "Montag – Freitag: 08:00 – 17:00\nSamstag & Sonntag: geschlossen",
     "booking_default_duration": 50,
-    "booking_show_instructor": true,
     "booking_meeting_points": "Bahnhof Buchs SG\nRuggell, Rotengasse 71\nSchaan, Lindaplatz\nNach Vereinbarung"
   },
   "presets": {}
