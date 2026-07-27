@@ -1,8 +1,12 @@
+{%- comment -%}
+  Buchungs-Kalender als Snippet – bewusst OHNE Section-Schema, damit Shopify
+  es zuverlässig rendert (die Section-Variante wurde von Shopifys strenger
+  Prüfung als "invalid section type" abgelehnt).
+  Aufruf: {% render 'booking' %}
+  Die Fahrstunden-Produkte kommen aus der Kollektion mit Handle "fahrstunden".
+{%- endcomment -%}
 {%- liquid
-  assign col = collections[section.settings.collection]
-  if col == blank
-    assign col = collections['fahrstunden']
-  endif
+  assign col = collections['fahrstunden']
   assign points_raw = settings.booking_meeting_points | newline_to_br
   assign points = points_raw | split: '<br />'
 -%}
@@ -10,9 +14,9 @@
   <div class="container booking" data-booking>
 
     <div class="section-head">
-      <span class="eyebrow">{{ section.settings.eyebrow }}</span>
-      <h2>{{ section.settings.heading }}</h2>
-      <p>{{ section.settings.text }}</p>
+      <span class="eyebrow">Online-Buchung</span>
+      <h2>Fahrstunde buchen</h2>
+      <p>Wähle deine Fahrstunde, einen freien Termin und bezahle sicher online. Dein Termin ist danach fix – ohne Hin und Her.</p>
       <hr class="roadline">
     </div>
 
@@ -23,10 +27,6 @@
       {%- if settings.contact_phone != blank %} unter <a href="tel:{{ settings.contact_phone | remove: ' ' }}">{{ settings.contact_phone }}</a>{% endif %}
       {%- if settings.contact_whatsapp != blank %} oder <a href="https://wa.me/{{ settings.contact_whatsapp }}" target="_blank" rel="noopener">schreib per WhatsApp</a>{% endif %} –
       wir finden zusammen einen Termin.
-      {%- if request.design_mode -%}
-        <br><small>Nur im Theme-Editor sichtbar: Prüfe, ob die Buchungs-App installiert, der App Proxy
-        (/apps/booking) eingerichtet und die Leistungen im App-Admin angelegt sind.</small>
-      {%- endif -%}
     </div>
     <noscript>
       <div class="booking__offline">
@@ -41,10 +41,6 @@
         Ruf mich gerne direkt an
         {%- if settings.contact_phone != blank %} unter <a href="tel:{{ settings.contact_phone | remove: ' ' }}">{{ settings.contact_phone }}</a>{% endif %} –
         wir finden zusammen einen Termin.
-        {%- if request.design_mode -%}
-          <br><small>Nur im Theme-Editor sichtbar: Wähle in den Abschnitts-Einstellungen die Kollektion
-          mit den Fahrstunden-Produkten aus.</small>
-        {%- endif -%}
       </div>
     {%- else -%}
 
@@ -139,17 +135,9 @@
             <label>
               <input type="checkbox" name="termsAccepted" value="1" required>
               Ich akzeptiere die
-              {%- if section.settings.terms_page != blank %}
-                <a href="{{ pages[section.settings.terms_page].url }}" target="_blank" rel="noopener">Buchungs- und Stornierungsbedingungen</a>
-              {%- else %}
-                Buchungs- und Stornierungsbedingungen
-              {%- endif %}
+              <a href="/pages/agb" target="_blank" rel="noopener">Buchungs- und Stornierungsbedingungen</a>
               und habe die
-              {%- if section.settings.privacy_page != blank %}
-                <a href="{{ pages[section.settings.privacy_page].url }}" target="_blank" rel="noopener">Datenschutzerklärung</a>
-              {%- else %}
-                Datenschutzerklärung
-              {%- endif %}
+              <a href="/pages/datenschutz" target="_blank" rel="noopener">Datenschutzerklärung</a>
               gelesen.
             </label>
           </div>
@@ -172,13 +160,12 @@
         </div>
 
         <button type="submit" class="btn btn--primary btn--block" data-booking-submit disabled>Verbindlich buchen</button>
-        <p class="booking-hint">Beim Klick wird dein Termin verbindlich reserviert und du wirst zur sicheren Bezahlung (Shopify-Checkout) weitergeleitet. Wird die Zahlung nicht innert {{ section.settings.hold_minutes_display }} Minuten abgeschlossen, wird der Termin automatisch wieder freigegeben.</p>
+        <p class="booking-hint">Beim Klick wird dein Termin verbindlich reserviert und du wirst zur sicheren Bezahlung (Shopify-Checkout) weitergeleitet. Wird die Zahlung nicht innert 20 Minuten abgeschlossen, wird der Termin automatisch wieder freigegeben.</p>
       </form>
 
       <script type="application/json" data-booking-config>
         {
           "backendUrl": {{ settings.booking_backend_url | default: '' | json }},
-          "proxyPath": {{ section.settings.proxy_path | default: '/apps/booking' | json }},
           "products": [
             {%- for product in col.products -%}
             {
@@ -199,20 +186,3 @@
 </section>
 
 <script src="{{ 'booking.js' | asset_url }}" defer></script>
-
-{% schema %}
-{
-  "name": "Buchung",
-  "settings": [
-    { "type": "text", "id": "eyebrow", "label": "Kleine Zeile", "default": "Online-Buchung" },
-    { "type": "text", "id": "heading", "label": "Titel", "default": "Fahrstunde buchen" },
-    { "type": "textarea", "id": "text", "label": "Text", "default": "Wähle deine Fahrstunde, einen freien Termin und bezahle sicher online. Dein Termin ist danach fix – ohne Hin und Her." },
-    { "type": "collection", "id": "collection", "label": "Kollektion mit Fahrstunden-Produkten" },
-    { "type": "text", "id": "proxy_path", "label": "App-Proxy-Pfad", "default": "/apps/booking", "info": "Muss zum App Proxy der Buchungs-App passen." },
-    { "type": "text", "id": "hold_minutes_display", "label": "Angezeigte Reservierungsdauer in Minuten (muss zur App-Einstellung passen)", "default": "20" },
-    { "type": "page", "id": "terms_page", "label": "Seite mit Buchungs- und Stornierungsbedingungen" },
-    { "type": "page", "id": "privacy_page", "label": "Seite mit Datenschutzerklärung" }
-  ],
-  "presets": [ { "name": "Buchung" } ]
-}
-{% endschema %}

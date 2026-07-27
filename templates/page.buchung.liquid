@@ -1,10 +1,8 @@
 {%- comment -%}
   Buchungsseite (Vorlage "buchung").
-  Bewusst als .liquid-Vorlage umgesetzt, damit Shopify sie zuverlässig als
-  Seitenvorlage erkennt. Der Kalender-Abschnitt "booking" holt die
-  Fahrstunden-Produkte aus der Kollektion mit Handle "fahrstunden"
-  (Fallback in sections/booking.liquid), sodass keine Zuweisung im
-  Theme-Editor nötig ist.
+  Rendert den Buchungs-Kalender aus dem Snippet snippets/booking.liquid –
+  bewusst kein Section-Schema, damit Shopify die Seite zuverlässig darstellt.
+  Fahrstunden-Produkte kommen aus der Kollektion mit Handle "fahrstunden".
 {%- endcomment -%}
-{% section 'booking' %}
+{% render 'booking' %}
 {% section 'cta-banner' %}
