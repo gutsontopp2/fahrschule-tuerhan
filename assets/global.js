@@ -39,7 +39,8 @@
       if (!holdId || !token) return; // normale Position – Standardverhalten
       e.preventDefault();
       link.setAttribute('aria-disabled', 'true');
-      fetch('/apps/booking/holds/' + encodeURIComponent(holdId) + '?bookingToken=' + encodeURIComponent(token), {
+      var bookingApi = (window.themeSettings && window.themeSettings.bookingApi) || '/apps/booking';
+      fetch(bookingApi + '/holds/' + encodeURIComponent(holdId) + '?bookingToken=' + encodeURIComponent(token), {
         method: 'DELETE'
       })
         .catch(function () { /* Freigabe scheitert -> Hold läuft serverseitig ab */ })

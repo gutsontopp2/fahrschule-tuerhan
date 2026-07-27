@@ -28,7 +28,11 @@
     return;
   }
 
-  var API = (cfg.proxyPath || '/apps/booking').replace(/\/+$/, '');
+  /* Direkter Backend-Aufruf (CORS) wenn eine Backend-URL hinterlegt ist,
+     sonst Fallback auf den Shopify App Proxy. */
+  var API = cfg.backendUrl
+    ? cfg.backendUrl.replace(/\/+$/, '') + '/proxy'
+    : (cfg.proxyPath || '/apps/booking').replace(/\/+$/, '');
   var WEEKDAYS = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
   var dateFmt = new Intl.DateTimeFormat('de-CH', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   var monthFmt = new Intl.DateTimeFormat('de-CH', { month: 'long', year: 'numeric' });

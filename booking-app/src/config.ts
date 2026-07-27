@@ -24,6 +24,14 @@ export const config = {
   /** Öffentliche Shop-URL für Links in E-Mails, z. B. https://fahrschule-tuerhan.li */
   publicShopUrl: process.env.PUBLIC_SHOP_URL ?? `https://${process.env.SHOPIFY_SHOP_DOMAIN}`,
 
+  /** Zusätzliche erlaubte Storefront-Domains (kommagetrennt), die den Kalender
+   *  direkt aufrufen dürfen – z. B. eine spätere eigene Domain wie
+   *  https://fahrschule-tuerhan.li. Die myshopify-Domain ist automatisch erlaubt. */
+  storefrontOrigins: (process.env.STOREFRONT_ORIGINS ?? '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean),
+
   smtp: {
     host: process.env.SMTP_HOST ?? '',
     port: Number(process.env.SMTP_PORT ?? 587),

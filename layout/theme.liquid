@@ -43,11 +43,19 @@
 
   {{ 'base.css' | asset_url | stylesheet_tag }}
 
+  {%- liquid
+    assign booking_api = '/apps/booking'
+    if settings.booking_backend_url != blank
+      assign backend = settings.booking_backend_url | strip
+      assign booking_api = backend | append: '/proxy'
+    endif
+  -%}
   <script>
     window.themeSettings = {
       cartCountUrl: '{{ routes.cart_url }}.js',
       cartAddUrl: '{{ routes.cart_add_url }}.js',
-      cartUrl: '{{ routes.cart_url }}'
+      cartUrl: '{{ routes.cart_url }}',
+      bookingApi: {{ booking_api | json }}
     };
   </script>
 

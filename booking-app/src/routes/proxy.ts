@@ -1,7 +1,12 @@
 /* ============================================================
-   Storefront-Routen hinter dem Shopify App Proxy.
-   Shopify leitet https://<shop>/apps/booking/* an diese Routen
-   weiter und signiert jede Anfrage (Query-Parameter `signature`).
+   Storefront-Routen für den Buchungskalender.
+   Erreichbar auf zwei Wegen:
+   1) Direkt vom Theme (Browser) per CORS – erlaubt nur die
+      freigegebene(n) Storefront-Domain(s).
+   2) Über den Shopify App Proxy (falls installiert) – dann ist
+      jede Anfrage von Shopify signiert (Query-Parameter `signature`).
+   Alle Zeit-/Buchungsdaten werden serverseitig validiert; Rate-
+   Limiting schützt zusätzlich. Es werden keine Secrets ausgeliefert.
    ============================================================ */
 import { Router } from 'express';
 import { z } from 'zod';
@@ -27,11 +32,45 @@ import { pool } from '../db.js';
 
 export const proxyRouter = Router();
 
-/* Signaturprüfung für alle Proxy-Routen. In Entwicklung kann sie mit
-   ALLOW_UNSIGNED_PROXY=1 deaktiviert werden – niemals in Produktion. */
+/* Erlaubte Storefront-Domains (für direkte CORS-Aufrufe des Kalenders). */
+const allowedOrigins = new Set<string>();
+allowedOrigins.add(`https://${config.shopDomain}`);
+try {
+  allowedOrigins.add(new URL(config.publicShopUrl).origin);
+} catch {
+  /* ungültige PUBLIC_SHOP_URL wird ignoriert */
+}
+for (const o of config.storefrontOrigins) allowedOrigins.add(o);
+
+function originAllowed(origin: string | undefined): origin is string {
+  return !!origin && allowedOrigins.has(origin);
+}
+
+/* CORS + Zugriffskontrolle: erlaubt eine Anfrage, wenn sie entweder von einer
+   freigegebenen Storefront-Domain kommt (CORS) ODER eine gültige Shopify-App-
+   Proxy-Signatur trägt. Alles andere wird mit 401 abgelehnt. */
 proxyRouter.use((req, res, next) => {
-  if (process.env.ALLOW_UNSIGNED_PROXY === '1' && config.nodeEnv !== 'production') return next();
-  if (!verifyProxySignature(req.query as Record<string, unknown>)) {
+  const origin = req.headers.origin as string | undefined;
+  const fromAllowedOrigin = originAllowed(origin);
+
+  if (fromAllowedOrigin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Max-Age', '86400');
+  }
+
+  // CORS-Preflight
+  if (req.method === 'OPTIONS') {
+    res.status(fromAllowedOrigin ? 204 : 403).end();
+    return;
+  }
+
+  const devBypass = process.env.ALLOW_UNSIGNED_PROXY === '1' && config.nodeEnv !== 'production';
+  const signatureOk = devBypass || verifyProxySignature(req.query as Record<string, unknown>);
+
+  if (!fromAllowedOrigin && !signatureOk) {
     res.status(401).json({ code: 'UNAUTHORIZED', message: 'Ungültige Anfrage.' });
     return;
   }

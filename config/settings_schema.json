@@ -119,7 +119,13 @@
     "settings": [
       {
         "type": "paragraph",
-        "content": "Die Online-Buchung läuft über die Buchungs-App (Custom App) und den Shopify App Proxy /apps/booking. Einrichtung: siehe booking-app/README.md im Theme-Repository."
+        "content": "Die Online-Buchung spricht direkt mit dem Buchungs-Backend (Custom App). Trage unten die Backend-URL ein. Einrichtung: siehe booking-app/README.md im Theme-Repository."
+      },
+      {
+        "type": "text",
+        "id": "booking_backend_url",
+        "label": "Backend-URL (ohne Slash am Ende)",
+        "info": "z. B. https://fahrschule-tuerhan-production.up.railway.app"
       },
       {
         "type": "range",
