@@ -1,5 +1,8 @@
 {%- liquid
   assign col = collections[section.settings.collection]
+  if col == blank
+    assign col = collections['fahrstunden']
+  endif
   assign points_raw = settings.booking_meeting_points | newline_to_br
   assign points = points_raw | split: '<br />'
 -%}

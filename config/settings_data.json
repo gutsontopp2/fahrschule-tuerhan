@@ -11,7 +11,7 @@
     "contact_email": "tuerhandilek@hotmail.com",
     "contact_whatsapp": "41789213348",
     "contact_address": "Fahrschule Türhan Anstalt\nRotengasse 71\n9491 Ruggell, Liechtenstein",
-    "opening_hours": "Montag – Freitag: 08:00 – 17:00\nSamstag & Sonntag: geschlossen",
+    "opening_hours": "Montag – Samstag: 07:00 – 21:00\nSonntag: geschlossen",
     "booking_backend_url": "https://fahrschule-tuerhan-production.up.railway.app",
     "booking_default_duration": 50,
     "booking_meeting_points": "Bahnhof Buchs SG\nRuggell, Rotengasse 71\nSchaan, Lindaplatz\nNach Vereinbarung"
