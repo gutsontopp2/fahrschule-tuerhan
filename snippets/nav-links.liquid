@@ -1,0 +1,13 @@
+{%- comment -%}
+  Hauptnavigation – fest im Theme definiert (unabhängig vom Shopify-Menü),
+  damit die richtigen Menüpunkte zuverlässig erscheinen.
+  Aufruf innerhalb einer <ul>: {% render 'nav-links' %}
+{%- endcomment -%}
+{%- assign p = request.path -%}
+<li><a href="{{ routes.root_url }}"{% if p == routes.root_url %} aria-current="page"{% endif %}>Startseite</a></li>
+<li><a href="/collections/fahrstunden"{% if p contains '/collections/fahrstunden' %} aria-current="page"{% endif %}>Fahrstunden</a></li>
+<li><a href="/pages/buchung"{% if p contains '/pages/buchung' %} aria-current="page"{% endif %}>Fahrstunde buchen</a></li>
+<li><a href="/pages/ueber-mich"{% if p contains '/pages/ueber-mich' %} aria-current="page"{% endif %}>Über mich</a></li>
+<li><a href="/pages/weg-zum-fuehrerschein"{% if p contains '/pages/weg-zum-fuehrerschein' %} aria-current="page"{% endif %}>Weg zum Führerschein</a></li>
+<li><a href="/pages/faq"{% if p contains '/pages/faq' %} aria-current="page"{% endif %}>Häufige Fragen</a></li>
+<li><a href="/pages/kontakt"{% if p contains '/pages/kontakt' %} aria-current="page"{% endif %}>Kontakt</a></li>

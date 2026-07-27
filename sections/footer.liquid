@@ -21,10 +21,7 @@
       <div>
         <h4>Navigation</h4>
         <ul>
-          {%- for link in linklists[section.settings.menu].links -%}
-            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-          {%- endfor -%}
-          <li><a href="{{ booking_url }}">Fahrstunde buchen</a></li>
+          {% render 'nav-links' %}
         </ul>
       </div>
 
@@ -51,9 +48,10 @@
         <p class="opening-hours" style="color:rgba(255,255,255,0.75);">{{ settings.opening_hours }}</p>
         <h4 style="margin-top:20px;">Rechtliches</h4>
         <ul>
-          {%- for link in linklists[section.settings.legal_menu].links -%}
-            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-          {%- endfor -%}
+          {%- if pages['impressum'] != blank -%}<li><a href="/pages/impressum">Impressum</a></li>{%- endif -%}
+          {%- if pages['datenschutz'] != blank -%}<li><a href="/pages/datenschutz">Datenschutzerklärung</a></li>{%- endif -%}
+          {%- if pages['agb'] != blank -%}<li><a href="/pages/agb">AGB</a></li>{%- endif -%}
+          {%- if pages['buchungsbedingungen'] != blank -%}<li><a href="/pages/buchungsbedingungen">Buchungs- &amp; Stornierungsbedingungen</a></li>{%- endif -%}
         </ul>
       </div>
     </div>
