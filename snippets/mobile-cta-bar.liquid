@@ -1,0 +1,19 @@
+{%- comment -%}
+  Sticky Aktionsleiste am unteren Rand – nur auf Handy/Tablet sichtbar.
+  Immer daumen-erreichbar: WhatsApp · Anrufen · Fahrstunde buchen.
+{%- endcomment -%}
+{%- liquid
+  assign booking_url = '/pages/buchung'
+  if settings.booking_page != blank
+    assign booking_url = pages[settings.booking_page].url
+  endif
+-%}
+<div class="mobile-cta-bar" aria-label="Schnellaktionen">
+  {%- if settings.contact_whatsapp != blank -%}
+    <a class="mobile-cta-bar__icon" href="https://wa.me/{{ settings.contact_whatsapp }}" target="_blank" rel="noopener" aria-label="WhatsApp schreiben">{% render 'icon', name: 'chat' %}</a>
+  {%- endif -%}
+  {%- if settings.contact_phone != blank -%}
+    <a class="mobile-cta-bar__icon" href="tel:{{ settings.contact_phone | remove: ' ' }}" aria-label="Anrufen">{% render 'icon', name: 'phone' %}</a>
+  {%- endif -%}
+  <a class="mobile-cta-bar__book btn btn--primary" href="{{ booking_url }}">Fahrstunde buchen</a>
+</div>

@@ -72,6 +72,11 @@
 
   {% section 'footer' %}
 
+  {%- comment -%} Sticky Buchen-Leiste (Handy) – nicht auf der Buchungsseite selbst {%- endcomment -%}
+  {%- unless request.path contains '/pages/buchung' -%}
+    {% render 'mobile-cta-bar' %}
+  {%- endunless -%}
+
   <script src="{{ 'global.js' | asset_url }}" defer></script>
 </body>
 </html>
