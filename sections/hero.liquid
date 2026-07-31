@@ -4,13 +4,15 @@
     assign booking_url = pages[settings.booking_page].url
   endif
 -%}
-<section class="hero">
+<section class="hero{% if section.settings.image == blank %} hero--text{% endif %}">
   <div class="container hero__inner">
-    <div>
-      <span class="hero__badge">
-        <span class="l-tile l-tile--sm" aria-hidden="true">L</span>
-        {{ section.settings.badge }}
-      </span>
+    <div class="hero__content">
+      {%- if section.settings.badge != blank -%}
+        <span class="hero__badge">
+          <span class="l-tile l-tile--sm" aria-hidden="true">L</span>
+          {{ section.settings.badge }}
+        </span>
+      {%- endif -%}
       <h1>{{ section.settings.heading }}</h1>
       <p>{{ section.settings.text }}</p>
       <div class="hero__actions">
@@ -18,10 +20,24 @@
         {%- if settings.contact_whatsapp != blank -%}
           <a class="btn btn--ghost" href="https://wa.me/{{ settings.contact_whatsapp }}" target="_blank" rel="noopener">{% render 'icon', name: 'chat' %} WhatsApp schreiben</a>
         {%- endif -%}
-        {%- if settings.contact_phone != blank -%}
-          <a class="btn btn--ghost" href="tel:{{ settings.contact_phone | remove: ' ' }}">{% render 'icon', name: 'phone' %} Jetzt anrufen</a>
-        {%- endif -%}
       </div>
+    </div>
+
+    {%- if section.settings.image != blank -%}
+      <div class="hero__media">
+        <img
+          src="{{ section.settings.image | image_url: width: 1400 }}"
+          srcset="{{ section.settings.image | image_url: width: 700 }} 700w, {{ section.settings.image | image_url: width: 1100 }} 1100w, {{ section.settings.image | image_url: width: 1600 }} 1600w"
+          sizes="(min-width: 1000px) 960px, 100vw"
+          alt="{{ section.settings.image.alt | default: 'Fahrschulauto der Fahrschule Türhan' | escape }}"
+          width="{{ section.settings.image.width }}"
+          height="{{ section.settings.image.height }}"
+          loading="eager"
+          fetchpriority="high">
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
       <div class="hero__stats">
         {%- for block in section.blocks -%}
           <div class="hero__stat" {{ block.shopify_attributes }}>
@@ -30,21 +46,7 @@
           </div>
         {%- endfor -%}
       </div>
-    </div>
-    <div class="hero__media">
-      {%- if section.settings.image != blank -%}
-        <img
-          src="{{ section.settings.image | image_url: width: 900 }}"
-          srcset="{{ section.settings.image | image_url: width: 600 }} 600w, {{ section.settings.image | image_url: width: 900 }} 900w, {{ section.settings.image | image_url: width: 1200 }} 1200w"
-          sizes="(min-width: 900px) 45vw, 100vw"
-          alt="{{ section.settings.image.alt | default: 'Fahrschulauto der Fahrschule Türhan' | escape }}"
-          width="{{ section.settings.image.width }}"
-          height="{{ section.settings.image.height }}"
-          loading="eager">
-      {%- else -%}
-        <div class="product-page__media--placeholder"><span class="l-tile" style="width:72px;height:72px;font-size:2.4rem;border-radius:16px;">L</span></div>
-      {%- endif -%}
-    </div>
+    {%- endif -%}
   </div>
 </section>
 
@@ -68,7 +70,7 @@
       "type": "textarea",
       "id": "text",
       "label": "Text",
-      "default": "Entspannt und ohne Stress zur bestandenen Autoprüfung – handgeschaltet oder Automat, im weissen Seat Leon FR. Wähle deinen Termin direkt online."
+      "default": "Entspannt zur bestandenen Autoprüfung – handgeschaltet oder Automat. Termin in zwei Minuten online buchen."
     },
     {
       "type": "text",
@@ -79,7 +81,7 @@
     {
       "type": "image_picker",
       "id": "image",
-      "label": "Bild (z. B. Fahrschulauto)"
+      "label": "Bild (z. B. du im Seat Leon FR) – gross unter dem Titel"
     }
   ],
   "blocks": [

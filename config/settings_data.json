@@ -1,10 +1,10 @@
 {
   "current": {
     "color_primary": "#0B5FD0",
-    "color_text": "#101418",
-    "color_text_muted": "#5C636B",
-    "color_background": "#F7F7F4",
-    "color_border": "#E4E4DE",
+    "color_text": "#0A0A0B",
+    "color_text_muted": "#6E6E73",
+    "color_background": "#FFFFFF",
+    "color_border": "#E5E5E7",
     "type_heading_font": "archivo_n7",
     "type_body_font": "work_sans_n4",
     "contact_phone": "+41 78 921 33 48",
