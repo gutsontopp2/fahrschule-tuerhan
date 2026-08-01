@@ -2,7 +2,7 @@
   <div class="container split {% if section.settings.reverse %}split--reverse{% endif %}">
     <div class="split__media">
       {%- if section.settings.image != blank -%}
-        <img
+        <img class="split__photo"
           src="{{ section.settings.image | image_url: width: 800 }}"
           srcset="{{ section.settings.image | image_url: width: 480 }} 480w, {{ section.settings.image | image_url: width: 800 }} 800w"
           sizes="(min-width: 900px) 45vw, 100vw"
@@ -10,6 +10,12 @@
           width="{{ section.settings.image.width }}"
           height="{{ section.settings.image.height }}"
           loading="lazy">
+      {%- else -%}
+        {%- comment -%} Mitgeliefertes Foto von Dilek Türhan (im Theme-Editor ersetzbar) {%- endcomment -%}
+        <img class="split__photo"
+          src="{{ 'dilek-tuerhan.jpg' | asset_url }}"
+          alt="{{ section.settings.heading | default: 'Dilek Türhan – Fahrlehrerin' | escape }}"
+          width="1200" height="1600" loading="lazy">
       {%- endif -%}
     </div>
     <div>
