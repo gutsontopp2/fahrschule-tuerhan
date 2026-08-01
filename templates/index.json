@@ -32,6 +32,15 @@
       "block_order": ["a1", "a2", "a3", "a4"],
       "settings": {}
     },
+    "fleet": {
+      "type": "fleet",
+      "blocks": {
+        "c1": { "type": "car", "settings": { "name": "VW Golf", "type": "Handschaltung" } },
+        "c2": { "type": "car", "settings": { "name": "Hyundai i30", "type": "Automat" } }
+      },
+      "block_order": ["c1", "c2"],
+      "settings": {}
+    },
     "packages": {
       "type": "packages",
       "settings": {}
@@ -46,7 +55,7 @@
       "settings": {
         "eyebrow": "Über mich",
         "heading": "Dilek Türhan – deine Fahrlehrerin",
-        "text": "<p>Das Lehren macht mir am meisten Spass an meinem Beruf. Ich sehe gerne die Entwicklung meiner Fahrschüler: ganz nervös am Anfang mit Tempo 20 – und gegen Schluss mit Musik, offenem Fenster und viel Selbstvertrauen unterwegs. Gefahren wird im weissen Seat Leon FR, handgeschaltet oder Automat.</p>",
+        "text": "<p>Das Lehren macht mir am meisten Spass an meinem Beruf. Ich sehe gerne die Entwicklung meiner Fahrschüler: ganz nervös am Anfang mit Tempo 20 – und gegen Schluss mit Musik, offenem Fenster und viel Selbstvertrauen unterwegs. Gefahren wird im VW Golf (Handschaltung) oder Hyundai i30 (Automat).</p>",
         "link_label": "Mehr über mich",
         "link": "/pages/ueber-mich"
       }
@@ -58,7 +67,7 @@
         "w2": { "type": "step", "settings": { "title": "Lernfahrausweis beantragen", "text": "Gesuch mit Sehtest und Nothilfeausweis einreichen. Wohnsitz in Liechtenstein: Amt für Strassenverkehr (llv.li). Wohnsitz im Kanton St. Gallen: Strassenverkehrsamt (sg.ch).", "link_label": "Amt für Strassenverkehr Liechtenstein", "link": "https://www.llv.li/de/landesverwaltung/amt-fuer-strassenverkehr" } },
         "w3": { "type": "step", "settings": { "title": "Theorie lernen und Theorieprüfung ablegen", "text": "Mit Lern-App oder Kurs auf die Theorieprüfung vorbereiten und die Prüfung bei der zuständigen Stelle ablegen. Kurse gibt es zum Beispiel im Fahrschulcenter in Schaan.", "link_label": "Fahrschulcenter Liechtenstein", "link": "https://www.fahrschulcenter.li/" } },
         "w4": { "type": "step", "settings": { "title": "Verkehrskundeunterricht (VKU)", "text": "Der VKU ist obligatorisch und umfasst mehrere Abende. Die Anmeldung übernehme ich gerne für dich – melde dich einfach." } },
-        "w5": { "type": "step", "settings": { "title": "Fahrstunden", "text": "Praktische Ausbildung im weissen Seat Leon FR – handgeschaltet oder Automat, mit 50 Minuten pro Lektion. Private Lernfahrten sind zusätzlich mit einer Begleitperson gemäss den gesetzlichen Vorgaben möglich." } },
+        "w5": { "type": "step", "settings": { "title": "Fahrstunden", "text": "Praktische Ausbildung im VW Golf (Handschaltung) oder Hyundai i30 (Automat), mit 50 Minuten pro Lektion. Private Lernfahrten sind zusätzlich mit einer Begleitperson gemäss den gesetzlichen Vorgaben möglich." } },
         "w6": { "type": "step", "settings": { "title": "Anmeldung zur praktischen Prüfung", "text": "Sobald du bereit bist, melden wir dich gemeinsam zur praktischen Prüfung an – in Liechtenstein oder im Kanton St. Gallen, je nach Wohnsitz." } },
         "w7": { "type": "step", "settings": { "title": "Praktische Prüfung bestehen", "text": "Nach bestandener Prüfung erhältst du deinen Führerausweis. Geschafft – gute Fahrt!" } }
       },
@@ -78,7 +87,7 @@
       "blocks": {
         "f1": { "type": "faq", "settings": {} },
         "f2": { "type": "faq", "settings": { "question": "Wo werde ich abgeholt?", "answer": "Beim Buchen wählst du einen Treffpunkt aus – zum Beispiel Bahnhof Buchs SG oder nach Vereinbarung. Andere Treffpunkte sind auf Anfrage möglich." } },
-        "f3": { "type": "faq", "settings": { "question": "Fahre ich handgeschaltet oder Automat?", "answer": "Beides ist möglich. Gib beim Buchen einfach die gewünschte Getriebeart an – gefahren wird im weissen Seat Leon FR." } },
+        "f3": { "type": "faq", "settings": { "question": "Fahre ich handgeschaltet oder Automat?", "answer": "Beides ist möglich. Gib beim Buchen einfach die gewünschte Getriebeart an – gefahren wird im VW Golf (Handschaltung) oder Hyundai i30 (Automat)." } },
         "f4": { "type": "faq", "settings": { "question": "Kann ich einen Termin verschieben oder stornieren?", "answer": "Ja, online über den Link in deiner Buchungsbestätigung oder telefonisch – bitte spätestens 24 Stunden vorher. Kurzfristigere Absagen müssen verrechnet werden." } },
         "f5": { "type": "faq", "settings": { "question": "Was brauche ich für die erste Fahrstunde?", "answer": "Deinen gültigen Lernfahrausweis und bequeme Schuhe. Alles andere besprechen wir in der ersten Lektion." } }
       },
@@ -94,5 +103,5 @@
       "settings": {}
     }
   },
-  "order": ["hero", "trust", "advantages", "packages", "about", "steps", "testimonials", "faq", "contact", "cta"]
+  "order": ["hero", "trust", "advantages", "fleet", "packages", "about", "steps", "testimonials", "faq", "contact", "cta"]
 }

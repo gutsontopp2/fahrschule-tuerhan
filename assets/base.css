@@ -1110,3 +1110,57 @@ img, video, svg { max-width: 100%; }
 
 /* Sticky Buchen-Leiste ausblenden, solange der Cookie-Banner offen ist */
 body.cookie-open .mobile-cta-bar { display: none; }
+
+/* ---------- Fahrzeuge ---------- */
+.fleet { display: grid; gap: 20px; }
+@media (min-width: 700px) { .fleet { grid-template-columns: repeat(2, 1fr); } }
+.fleet-card {
+  background: var(--weiss);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius);
+  padding: 24px;
+  text-align: center;
+}
+.fleet-card__media { display: flex; align-items: center; justify-content: center; min-height: 180px; }
+.fleet-card__media img {
+  width: 100%;
+  height: auto;
+  max-height: 220px;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.18));
+}
+.fleet-card__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: var(--asphalt);
+}
+.fleet-card__placeholder .l-tile { width: 56px; height: 56px; border-radius: 14px; }
+.fleet-card__label { margin-top: 18px; }
+.fleet-card__label b {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  letter-spacing: -0.01em;
+}
+.fleet-card__label span {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--blau);
+}
+
+/* ---------- Reveal beim Reinscrollen (Slide-in + Fade-in) ---------- */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1); }
+.reveal.is-visible { opacity: 1; transform: none; }
+/* Fahrzeugkarten kommen abwechselnd von links/rechts hereingefahren */
+@media (min-width: 700px) {
+  .fleet .reveal:nth-child(odd) { transform: translateX(-40px); }
+  .fleet .reveal:nth-child(even) { transform: translateX(40px); }
+  .fleet .reveal.is-visible { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .fleet .reveal { opacity: 1; transform: none; transition: none; }
+}

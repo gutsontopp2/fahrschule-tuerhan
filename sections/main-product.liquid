@@ -24,7 +24,7 @@
       <p class="product-page__price">{{ product.price | money_with_currency }}</p>
       <div class="product-page__meta">
         <span>{% render 'icon', name: 'clock' %} {{ duration }} Minuten</span>
-        <span>{% render 'icon', name: 'car' %} Seat Leon FR</span>
+        <span>{% render 'icon', name: 'car' %} Handschaltung &amp; Automat</span>
       </div>
       <div class="product-page__desc rte">{{ product.description }}</div>
       <a class="btn btn--primary" href="{{ booking_url }}?leistung={{ product.handle }}">Termin wählen</a>
