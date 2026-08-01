@@ -77,10 +77,26 @@
     "testimonials": {
       "type": "testimonials",
       "blocks": {
-        "t1": { "type": "testimonial", "settings": { "stars": 6, "quote": "Sehr kompetent, immer gut gelaunt! Habe die Fahrprüfung direkt im ersten Anlauf bestanden.", "name": "Fabio", "detail": "Kategorie B, bestanden im 1. Anlauf" } }
+        "t1": { "type": "testimonial", "settings": { "stars": 5, "quote": "Ich bin sehr zufrieden und würde Dilek weiterempfehlen. Sie erklärt super, ist geduldig und nett. Die Fahrstunden haben immer Spass gemacht.", "name": "Jana M.", "detail": "04.07.2025" } },
+        "t2": { "type": "testimonial", "settings": { "stars": 5, "quote": "Eine tolle Zeit mit der besten Fahrlehrerin gehabt. Danke für die tollen Fahrstunden!", "name": "Argjend Q.", "detail": "16.07.2019" } },
+        "t3": { "type": "testimonial", "settings": { "stars": 5, "quote": "Ich kann die Fahrlehrerin Dilek auf jeden Fall weiterempfehlen! Sie erklärt alles sehr gut und hat super Tipps. Ausserdem gibt sie einem ein sicheres Gefühl und bereitet einen professionell auf die Prüfung vor.", "name": "lara", "detail": "18.10.2019" } },
+        "t4": { "type": "testimonial", "settings": { "stars": 5, "quote": "Ich kann Dilek weiterempfehlen, da sie gut erklären und die Fragen gut beantworten kann. Sie hat auch in schwierigen Situationen immer Geduld und ist sehr nett!", "name": "juli", "detail": "11.08.2020" } },
+        "t5": { "type": "testimonial", "settings": { "stars": 5, "quote": "Ich kann Dilek auf jeden Fall weiterempfehlen. Sie ist eine angenehme Person, man hat es lustig mit ihr und wird gut auf die Fahrprüfung vorbereitet. Alles top!", "name": "p.ri", "detail": "09.07.2020" } },
+        "t6": { "type": "testimonial", "settings": { "stars": 5, "quote": "Dilek ist eine sehr gute Fahrlehrerin. Sie ist eine ruhige Beifahrerin und kann gut erklären. Ich ging gerne in die Fahrstunden – ich kann sie nur empfehlen!", "name": "Anni", "detail": "20.11.2018" } },
+        "t7": { "type": "testimonial", "settings": { "stars": 5, "quote": "Dilek ist eine sehr freundliche und motivierte Fahrlehrerin. Ausserdem hat sie viel Geduld und kann gut erklären. Ich würde sie auf jeden Fall weiterempfehlen!", "name": "buec", "detail": "05.06.2019" } },
+        "t8": { "type": "testimonial", "settings": { "stars": 5, "quote": "Dilek ist eine super Fahrlehrerin! Man lernt schnell und es macht Spass.", "name": "vict", "detail": "08.07.2020" } },
+        "t9": { "type": "testimonial", "settings": { "stars": 5, "quote": "Sehr nett, geduldig und erklärt sehr gut!", "name": "luis", "detail": "19.02.2020" } },
+        "t10": { "type": "testimonial", "settings": { "stars": 5, "quote": "Super Fahrlehrerin! Bin sehr zufrieden.", "name": "ayha", "detail": "06.06.2019" } },
+        "t11": { "type": "testimonial", "settings": { "stars": 5, "quote": "Dilek kann ich nur jedem empfehlen! Erst durch sie habe ich Freude am Autofahren gefunden.", "name": "Kers", "detail": "07.11.2018" } },
+        "t12": { "type": "testimonial", "settings": { "stars": 5, "quote": "Super Fahrlehrerin – kann ich absolut weiterempfehlen!", "name": "Zita", "detail": "23.12.2018" } }
       },
-      "block_order": ["t1"],
-      "settings": {}
+      "block_order": ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10", "t11", "t12"],
+      "settings": {
+        "text": "5,0 von 5 Sternen aus 86 Bewertungen auf fahrlehrervergleich.ch.",
+        "source_label": "Quelle: fahrlehrervergleich.ch",
+        "source_url": "https://www.fahrlehrervergleich.ch/d/fahrschulen/fahrschule-turhan-anstalt-d:yXhDSzary",
+        "source_link_text": "alle 86 Bewertungen ansehen"
+      }
     },
     "faq": {
       "type": "faq",

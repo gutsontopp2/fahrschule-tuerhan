@@ -442,8 +442,31 @@ ul { padding-left: 1.2em; }
 /* ---------- Bewertungen ---------- */
 .testimonials { display: grid; gap: 16px; }
 @media (min-width: 768px) { .testimonials { grid-template-columns: repeat(3, 1fr); } }
+
+/* Scrollbares Bewertungs-Karussell (seitlich wischbar / scrollbar) */
+.testimonials--scroll {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px 4px 16px;
+  scroll-padding-left: 4px;
+}
+.testimonials--scroll .testimonial {
+  flex: 0 0 auto;
+  width: min(82vw, 340px);
+  scroll-snap-align: start;
+}
+.testimonials--scroll:focus-visible { outline: 3px solid var(--blau-hell); outline-offset: 4px; border-radius: var(--radius); }
+.testimonials--scroll::-webkit-scrollbar { height: 8px; }
+.testimonials--scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.28); border-radius: 999px; }
+.testimonials--scroll::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.08); border-radius: 999px; }
+.testimonials__source { text-align: center; margin-top: 22px; font-size: 0.88rem; color: rgba(255, 255, 255, 0.65); }
+.testimonials__source a { color: #fff; }
 .testimonial {
   background: var(--weiss);
+  color: var(--nacht);
   border: 1px solid var(--linie);
   border-radius: var(--radius);
   padding: 24px;

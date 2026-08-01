@@ -3,23 +3,33 @@
     <div class="section-head">
       <span class="eyebrow">{{ section.settings.eyebrow }}</span>
       <h2>{{ section.settings.heading }}</h2>
-      <p>{{ section.settings.text }}</p>
+      {%- if section.settings.text != blank -%}<p>{{ section.settings.text }}</p>{%- endif -%}
       <hr class="roadline">
     </div>
-    <div class="testimonials">
+
+    <div class="testimonials testimonials--scroll" tabindex="0" role="list" aria-label="Bewertungen – seitlich scrollbar">
       {%- for block in section.blocks -%}
-        <figure class="testimonial" style="color:var(--nacht);" {{ block.shopify_attributes }}>
-          <div class="testimonial__stars" aria-label="{{ block.settings.stars }} von 6 Sternen">
+        <figure class="testimonial" role="listitem" {{ block.shopify_attributes }}>
+          <div class="testimonial__stars" aria-label="{{ block.settings.stars }} von 5 Sternen">
             {%- for i in (1..block.settings.stars) -%}★{%- endfor -%}
           </div>
           <blockquote>«{{ block.settings.quote }}»</blockquote>
           <figcaption>
             {{ block.settings.name }}
-            <span>{{ block.settings.detail }}</span>
+            {%- if block.settings.detail != blank -%}<span>{{ block.settings.detail }}</span>{%- endif -%}
           </figcaption>
         </figure>
       {%- endfor -%}
     </div>
+
+    {%- if section.settings.source_label != blank -%}
+      <p class="testimonials__source">
+        {{ section.settings.source_label }}
+        {%- if section.settings.source_url != blank -%}
+          · <a href="{{ section.settings.source_url }}" target="_blank" rel="noopener">{{ section.settings.source_link_text | default: 'alle Bewertungen ansehen' }}</a>
+        {%- endif -%}
+      </p>
+    {%- endif -%}
   </div>
 </section>
 
@@ -29,21 +39,24 @@
   "settings": [
     {
       "type": "paragraph",
-      "content": "Wichtig: Nur echte, bestätigte Bewertungen veröffentlichen – keine erfundenen Namen oder Aussagen."
+      "content": "Wichtig: Nur echte, bestätigte Bewertungen veröffentlichen. Quelle korrekt angeben."
     },
     { "type": "text", "id": "eyebrow", "label": "Kleine Zeile", "default": "Bewertungen" },
     { "type": "text", "id": "heading", "label": "Titel", "default": "Das sagen meine Fahrschüler" },
-    { "type": "text", "id": "text", "label": "Text", "default": "61 Fahrschüler haben mich bewertet – 99 % waren höchst zufrieden (6 von 6 Sternen)." }
+    { "type": "text", "id": "text", "label": "Text", "default": "5,0 von 5 Sternen aus 86 Bewertungen auf fahrlehrervergleich.ch." },
+    { "type": "text", "id": "source_label", "label": "Quellenangabe", "default": "Quelle: fahrlehrervergleich.ch" },
+    { "type": "url", "id": "source_url", "label": "Link zur Quelle" },
+    { "type": "text", "id": "source_link_text", "label": "Link-Text", "default": "alle 86 Bewertungen ansehen" }
   ],
   "blocks": [
     {
       "type": "testimonial",
       "name": "Bewertung",
       "settings": [
-        { "type": "range", "id": "stars", "label": "Sterne (von 6)", "min": 1, "max": 6, "step": 1, "default": 6 },
-        { "type": "textarea", "id": "quote", "label": "Zitat", "default": "Sehr kompetent, immer gut gelaunt! Habe die Fahrprüfung direkt im ersten Anlauf bestanden." },
-        { "type": "text", "id": "name", "label": "Name", "default": "Fabio" },
-        { "type": "text", "id": "detail", "label": "Zusatz", "default": "Kategorie B, bestanden im 1. Anlauf" }
+        { "type": "range", "id": "stars", "label": "Sterne (von 5)", "min": 1, "max": 5, "step": 1, "default": 5 },
+        { "type": "textarea", "id": "quote", "label": "Zitat", "default": "Sehr nett, geduldig und erklärt sehr gut!" },
+        { "type": "text", "id": "name", "label": "Name", "default": "Fahrschüler:in" },
+        { "type": "text", "id": "detail", "label": "Zusatz (z. B. Datum)", "default": "" }
       ]
     }
   ],

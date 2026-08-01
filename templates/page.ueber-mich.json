@@ -24,10 +24,20 @@
     "testimonials": {
       "type": "testimonials",
       "blocks": {
-        "t1": { "type": "testimonial", "settings": { "stars": 6, "quote": "Sehr kompetent, immer gut gelaunt! Habe die Fahrprüfung direkt im ersten Anlauf bestanden.", "name": "Fabio", "detail": "Kategorie B, bestanden im 1. Anlauf" } }
+        "t1": { "type": "testimonial", "settings": { "stars": 5, "quote": "Ich bin sehr zufrieden und würde Dilek weiterempfehlen. Sie erklärt super, ist geduldig und nett. Die Fahrstunden haben immer Spass gemacht.", "name": "Jana M.", "detail": "04.07.2025" } },
+        "t2": { "type": "testimonial", "settings": { "stars": 5, "quote": "Ich kann die Fahrlehrerin Dilek auf jeden Fall weiterempfehlen! Sie erklärt alles sehr gut und hat super Tipps und gibt einem ein sicheres Gefühl.", "name": "lara", "detail": "18.10.2019" } },
+        "t3": { "type": "testimonial", "settings": { "stars": 5, "quote": "Ich kann Dilek auf jeden Fall weiterempfehlen. Sie ist eine angenehme Person, man hat es lustig mit ihr und wird gut auf die Fahrprüfung vorbereitet. Alles top!", "name": "p.ri", "detail": "09.07.2020" } },
+        "t4": { "type": "testimonial", "settings": { "stars": 5, "quote": "Dilek ist eine sehr freundliche und motivierte Fahrlehrerin. Ausserdem hat sie viel Geduld und kann gut erklären. Ich würde sie auf jeden Fall weiterempfehlen!", "name": "buec", "detail": "05.06.2019" } },
+        "t5": { "type": "testimonial", "settings": { "stars": 5, "quote": "Dilek ist eine super Fahrlehrerin! Man lernt schnell und es macht Spass.", "name": "vict", "detail": "08.07.2020" } },
+        "t6": { "type": "testimonial", "settings": { "stars": 5, "quote": "Eine tolle Zeit mit der besten Fahrlehrerin gehabt. Danke für die tollen Fahrstunden!", "name": "Argjend Q.", "detail": "16.07.2019" } }
       },
-      "block_order": ["t1"],
-      "settings": {}
+      "block_order": ["t1", "t2", "t3", "t4", "t5", "t6"],
+      "settings": {
+        "text": "5,0 von 5 Sternen aus 86 Bewertungen auf fahrlehrervergleich.ch.",
+        "source_label": "Quelle: fahrlehrervergleich.ch",
+        "source_url": "https://www.fahrlehrervergleich.ch/d/fahrschulen/fahrschule-turhan-anstalt-d:yXhDSzary",
+        "source_link_text": "alle 86 Bewertungen ansehen"
+      }
     },
     "cta": { "type": "cta-banner", "settings": {} }
   },
