@@ -65,11 +65,18 @@ Kontaktierst du uns per WhatsApp, gelten zusätzlich die Datenschutzhinweise
 von WhatsApp (Meta Platforms Ireland Ltd.). Übermittle über WhatsApp keine
 besonders schützenswerten Daten.
 
-### 7. Cookies
+### 7. Cookies und Einwilligung
 
-Shopify setzt technisch notwendige Cookies (z. B. für den Warenkorb und die
+Shopify setzt technisch notwendige Cookies (z. B. für Warenkorb und die
 Sicherheit des Checkouts). Ein separates Analyse- oder Marketing-Tracking
-setzen wir nicht ein. [FALLS SPÄTER ANALYTICS ERGÄNZT WIRD: ABSCHNITT ERWEITERN]
+setzen wir derzeit **nicht** ein.
+
+Beim ersten Besuch erscheint ein **Cookie-Banner** mit den Optionen „Alle
+akzeptieren", „Nur notwendige" und „Einstellungen". Deine Wahl wird lokal
+gespeichert und kann jederzeit über den Link „Cookie-Einstellungen" im Footer
+geändert werden. Details in der separaten **Cookie-Richtlinie**.
+[FALLS SPÄTER ANALYTICS/MARKETING ERGÄNZT WIRD: DIENSTE HIER UND IN DER
+COOKIE-RICHTLINIE EINTRAGEN.]
 
 ### 8. Deine Rechte
 

@@ -1,0 +1,44 @@
+{%- comment -%}
+  Cookie-Consent-Banner. Wird per JS (global.js) nur angezeigt, wenn noch
+  keine Wahl getroffen wurde. Aktuell nutzt die Seite nur technisch notwendige
+  Cookies (Shopify: Warenkorb/Checkout/Sicherheit). Optionale Kategorien sind
+  vorbereitet und werden erst aktiv, wenn du entsprechende Dienste ergänzt.
+{%- endcomment -%}
+{%- liquid
+  assign cookie_url = ''
+  if pages['cookies'] != blank
+    assign cookie_url = pages['cookies'].url
+  elsif pages['cookie-richtlinie'] != blank
+    assign cookie_url = pages['cookie-richtlinie'].url
+  endif
+-%}
+<div class="cookie-banner" data-cookie-banner hidden role="dialog" aria-label="Cookie-Hinweis" aria-live="polite">
+  <div class="cookie-banner__inner">
+    <p class="cookie-banner__text">
+      <strong>Wir respektieren deine Privatsphäre.</strong>
+      Notwendige Cookies sorgen dafür, dass Website und Warenkorb funktionieren. Optionale Cookies (z. B. Statistik) nur mit deiner Zustimmung.
+      {%- if cookie_url != blank %} <a href="{{ cookie_url }}">Mehr erfahren</a>.{% endif -%}
+    </p>
+    <div class="cookie-banner__actions">
+      <button type="button" class="btn btn--ghost cookie-banner__btn" data-cookie="settings">Einstellungen</button>
+      <button type="button" class="btn btn--ghost cookie-banner__btn" data-cookie="necessary">Nur notwendige</button>
+      <button type="button" class="btn btn--primary cookie-banner__btn" data-cookie="all">Alle akzeptieren</button>
+    </div>
+
+    <div class="cookie-settings" data-cookie-settings hidden>
+      <label class="cookie-settings__row">
+        <span><strong>Notwendig</strong><small>Für Betrieb, Warenkorb und Sicherheit erforderlich.</small></span>
+        <input type="checkbox" checked disabled aria-label="Notwendige Cookies (immer aktiv)">
+      </label>
+      <label class="cookie-settings__row">
+        <span><strong>Statistik</strong><small>Hilft zu verstehen, wie die Seite genutzt wird.</small></span>
+        <input type="checkbox" data-cookie-cat="analytics">
+      </label>
+      <label class="cookie-settings__row">
+        <span><strong>Marketing</strong><small>Für personalisierte Inhalte oder Werbung.</small></span>
+        <input type="checkbox" data-cookie-cat="marketing">
+      </label>
+      <button type="button" class="btn btn--primary btn--block" data-cookie="save">Auswahl speichern</button>
+    </div>
+  </div>
+</div>

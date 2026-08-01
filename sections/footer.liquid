@@ -44,8 +44,10 @@
         <ul>
           {%- if pages['impressum'] != blank -%}<li><a href="/pages/impressum">Impressum</a></li>{%- endif -%}
           {%- if pages['datenschutz'] != blank -%}<li><a href="/pages/datenschutz">Datenschutzerklärung</a></li>{%- endif -%}
+          {%- if pages['cookies'] != blank -%}<li><a href="/pages/cookies">Cookie-Richtlinie</a></li>{%- elsif pages['cookie-richtlinie'] != blank -%}<li><a href="/pages/cookie-richtlinie">Cookie-Richtlinie</a></li>{%- endif -%}
           {%- if pages['agb'] != blank -%}<li><a href="/pages/agb">AGB</a></li>{%- endif -%}
           {%- if pages['buchungsbedingungen'] != blank -%}<li><a href="/pages/buchungsbedingungen">Buchungs- &amp; Stornierungsbedingungen</a></li>{%- endif -%}
+          <li><a href="#" data-cookie-reopen>Cookie-Einstellungen</a></li>
         </ul>
       </div>
     </div>

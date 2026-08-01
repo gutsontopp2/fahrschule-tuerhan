@@ -300,13 +300,22 @@ ul { padding-left: 1.2em; }
 .hero__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 32px; }
 .hero .btn--ghost { color: #fff; border-color: rgba(255, 255, 255, 0.35); background: transparent; }
 .hero .btn--ghost:hover { background: #fff; color: var(--nacht); border-color: #fff; }
-.hero__media { width: 100%; max-width: 960px; margin: 56px auto 0; }
+.hero__media { width: 100%; max-width: 940px; margin: 48px auto 0; }
 .hero__media img {
-  border-radius: 22px;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
   width: 100%;
-  object-fit: cover;
-  aspect-ratio: 16 / 10;
+  height: auto;
+  display: block;
+  border-radius: 22px;
+  /* Freisteller (transparent) schwebt; helle Fotos wirken als gerahmtes Bild */
+  filter: drop-shadow(0 26px 60px rgba(0, 0, 0, 0.45));
+}
+/* Auto fährt beim Laden einmal sanft herein (Slide-in + Fade-in) */
+@media (prefers-reduced-motion: no-preference) {
+  .hero__media { animation: hero-media-in 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) both; animation-delay: 0.12s; }
+}
+@keyframes hero-media-in {
+  from { opacity: 0; transform: translateX(-36px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 .hero__stats {
   display: flex;
@@ -1069,3 +1078,35 @@ img, video, svg { max-width: 100%; }
 @media (max-width: 899px) {
   .mobile-nav a { padding: 14px 20px; font-size: 1.05rem; }
 }
+
+/* ---------- Cookie-Banner ---------- */
+.cookie-banner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 120;
+  background: var(--weiss);
+  border-top: 1px solid var(--linie);
+  box-shadow: 0 -10px 40px rgba(16, 20, 24, 0.12);
+  padding: 16px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+}
+.cookie-banner__inner { max-width: var(--container); margin: 0 auto; }
+.cookie-banner__text { font-size: 0.9rem; color: var(--asphalt); margin: 0 0 12px; }
+.cookie-banner__text strong { color: var(--nacht); }
+.cookie-banner__actions { display: grid; gap: 8px; }
+.cookie-banner__btn { min-height: 46px; padding: 12px 18px; }
+@media (min-width: 720px) {
+  .cookie-banner__inner { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .cookie-banner__text { margin: 0; flex: 1; min-width: 260px; }
+  .cookie-banner__actions { grid-auto-flow: column; }
+  .cookie-settings { flex-basis: 100%; }
+}
+.cookie-settings { margin-top: 14px; border-top: 1px solid var(--linie); padding-top: 14px; display: grid; gap: 12px; }
+.cookie-settings__row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.cookie-settings__row span { display: flex; flex-direction: column; }
+.cookie-settings__row small { color: var(--asphalt); font-size: 0.8rem; }
+.cookie-settings__row input { width: 22px; height: 22px; flex: none; accent-color: var(--blau); }
+
+/* Sticky Buchen-Leiste ausblenden, solange der Cookie-Banner offen ist */
+body.cookie-open .mobile-cta-bar { display: none; }

@@ -39,6 +39,7 @@
 
 ### Preise und Zahlung
 
+- **1 Fahrlektion (50 Minuten): CHF 100.–**
 - Es gelten die zum Zeitpunkt der Buchung angezeigten Preise.
 - Die Zahlung erfolgt online über den Shopify-Checkout.
 

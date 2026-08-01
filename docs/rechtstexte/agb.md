@@ -31,8 +31,9 @@ diesem Fall neu terminiert oder rückerstattet.
 
 ### 4. Preise und Zahlung
 
-Es gelten die zum Zeitpunkt der Buchung ausgewiesenen Preise. Die Zahlung
-erfolgt online über den Shopify-Checkout oder nach Vereinbarung.
+Der Preis für eine Fahrlektion (50 Minuten) beträgt **CHF 100.–**. Es gelten
+die zum Zeitpunkt der Buchung ausgewiesenen Preise. Die Zahlung erfolgt online
+über den Shopify-Checkout oder nach Vereinbarung.
 [OPTIONAL: REGELUNG ZU PAKETEN/GUTSCHEINEN ERGÄNZEN, Z. B. GÜLTIGKEITSDAUER]
 
 ### 5. Pflichten der Fahrschülerin / des Fahrschülers
